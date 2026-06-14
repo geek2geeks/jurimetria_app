@@ -63,8 +63,9 @@ Foram adicionadas instruções para Windows e macOS:
 
 ## GitHub e Jira
 
-- O GitHub remoto existe, mas estas alterações ainda precisam de ser publicadas.
+- As alterações estão publicadas na branch `codex/onboarding-ai-workflow` e no Pull Request 1.
 - Pedro e um colega já têm acesso; seis convites GitHub aguardam aceitação.
+- A branch `main` está protegida e exige uma aprovação humana.
 - O script Jira foi preparado para criar oito tarefas de forma idempotente.
 - A execução real requer um token novo, email da conta administradora e `accountId` dos oito membros.
 
@@ -74,14 +75,14 @@ Foram adicionadas instruções para Windows e macOS:
 - O repositório é público; amostras e logs exigem revisão antes do commit.
 - O projeto Jira e os acessos dos colegas ainda precisam de confirmação autenticada.
 - A implementação funcional ainda não existe.
-- A branch `main` ainda precisa de proteção.
+- O GitHub Actions está bloqueado por um problema de faturação da conta; os testes locais passam.
 
 ## Próximas ações
 
 1. Revogar e substituir o token Jira exposto.
 2. Configurar os responsáveis Jira localmente.
 3. Executar a simulação e depois criar as tarefas.
-4. Publicar a documentação no GitHub.
-5. Proteger `main`.
+4. Obter revisão independente e fazer merge do Pull Request 1.
+5. Resolver o bloqueio de faturação do GitHub Actions.
 6. Convidar os colegas.
 7. Cada membro instala o ambiente, lê o onboarding e começa pela sua spec.

@@ -9,11 +9,11 @@ A documentação de arquitetura, instalação, GitHub, Jira, IA e responsabilida
 
 O projeto só deve ser distribuído depois de:
 
-1. publicar estas alterações no GitHub;
+1. obter revisão e fazer merge do Pull Request 1;
 2. convidar os sete colegas para GitHub e Jira;
 3. criar e atribuir as oito tarefas Jira;
 4. rodar o token Jira que foi exposto numa conversa;
-5. configurar proteção da branch `main`.
+5. resolver o bloqueio de faturação do GitHub Actions.
 
 ## Raiz
 
@@ -32,12 +32,12 @@ O projeto só deve ser distribuído depois de:
 | Item | Estado | Observação |
 |---|---|---|
 | Repositório remoto | Existe | `geek2geeks/jurimetria_app`, público, branch principal `main`. |
-| Conteúdo remoto | Incompleto | A maior parte da documentação atual ainda está apenas local. |
+| Conteúdo remoto | Em revisão | Alterações publicadas na branch `codex/onboarding-ai-workflow` e no Pull Request 1. |
 | Acessos | Parcial | Pedro e um colega têm acesso; existem seis convites de escrita pendentes. |
-| Pull Request template | Criado localmente | Inclui ticket, testes, IA, privacidade e leakage. |
-| CODEOWNERS | Criado localmente | Solicita revisão a `@geek2geeks`. |
-| CI | Criado localmente | Python 3.11 e descoberta explícita de testes. |
-| Proteção de `main` | Pendente | Deve exigir PR, uma aprovação e CI depois da publicação. |
+| Pull Request template | Em revisão | Inclui ticket, testes, IA, privacidade e leakage. |
+| CODEOWNERS | Em revisão | Solicita revisão a `@geek2geeks`. |
+| CI | Bloqueado externamente | Workflow válido com Python 3.11, mas o GitHub não iniciou o runner porque a conta está bloqueada por um problema de faturação. |
+| Proteção de `main` | Ativa | Exige PR, uma aprovação, histórico linear e resolução de conversas. |
 
 ## Jira
 
@@ -79,4 +79,5 @@ O projeto só deve ser distribuído depois de:
 - Rodar a chave Jira exposta.
 - Obter os emails para convites e os `accountId` para atribuição.
 - Confirmar o projeto Jira `SCRUM`.
-- Publicar e proteger a branch principal.
+- Obter revisão independente e fazer merge do Pull Request 1.
+- Resolver o bloqueio de faturação do GitHub e relançar o workflow.
