@@ -54,7 +54,7 @@ Também deves guardar:
 ```text
 artefactos/execucao_XXX/vetorizador/vocabulario.json
 artefactos/execucao_XXX/vetorizador/idf.npy
-artefactos/execucao_XXX/vetorizador/config.json
+artefactos/execucao_XXX/vetorizador/configuracao.json
 artefactos/execucao_XXX/categorias/categoria_para_id.json
 artefactos/execucao_XXX/categorias/id_para_categoria.json
 ```

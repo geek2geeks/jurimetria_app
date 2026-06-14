@@ -30,6 +30,7 @@ Matrizes NumPy de Treino (`caracteristicas_treino`, `caracteristicas_teste`, `ca
 - [ ] No `treinar_modelo.py`, constrói o `DataLoader` e a rotina de treino: passagem direta, `perda.backward()` e `otimizador.step()`.
 - [ ] SALVAMENTO CORRETO: `torch.save(model.state_dict(), "artefactos/execucao_XXX/modelo/pesos.pth")`.
 - [ ] Guarda a configuração com a biblioteca `json` em `configuracao_modelo.json`, detalhando as dimensões necessárias para reconstruir o modelo.
+- [ ] **Comparar pelo menos duas configurações** (ex.: nº de camadas, ativação ou batch size) e registar a curva de perda de cada uma (requisito do enunciado, RF09).
 
 ## Exemplo
 Conteúdo de `configuracao_modelo.json`:

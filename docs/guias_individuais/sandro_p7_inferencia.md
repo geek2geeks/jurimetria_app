@@ -6,6 +6,8 @@ Tu transformas o projeto treinado numa ferramenta utilizável. Depois de todos c
 
 A tua tarefa principal é local: não depende da Internet nem de uma API externa. A parte de modelo de linguagem é opcional.
 
+> **Entrada coerente com o treino:** o texto que entra na inferência deve ter a **mesma composição do treino** — descritores + sumário (`Acordao.texto_caracteristicas()`) — e passar pela mesma limpeza do Gustavo. Caso contrário, as características ficam desalinhadas face ao vocabulário aprendido pela Gleicy.
+
 ## O que vais construir
 
 - `src/inferencia/motor_inferencia.py`;

@@ -16,7 +16,7 @@ Se a nossa plataforma não puder ser invocada isoladamente em inferência, de na
 
 ## Entradas
 - Um argumento de linha de comandos que indica a diretoria do modelo por meio do identificador da execução (`execucao_001`).
-- Um fragmento de sumário em bruto.
+- O texto do novo documento na **mesma composição do treino**: descritores + sumário (ver `Acordao.texto_caracteristicas()`). Numa demonstração simples aceita-se só o sumário, mas avisa que omitir os descritores degrada as características face ao treino.
 
 ## Saídas
 - O terminal apresenta a previsão final para esse sumário.

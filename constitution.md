@@ -81,7 +81,7 @@ artefactos/
 - O analisador de metadados deve ser tolerante a campos ausentes, usando `None`.
 - A `decisao_bruta`, o texto dispositivo, ECLI, URL e qualquer trecho de `texto_integral` que revele a decisão NUNCA entram na matriz explicativa (X).
 - As únicas fontes de texto autorizadas para X são `descritores` e `sumario`, depois da limpeza definida pelo P3.
-- O papel do JSON é ser uma fonte alternativa e aceleradora. Regra:
+- Cada PDF do corpus vem com um JSON irmão (`extraction_success=true`), que é a **source of truth** da extração e o desbloqueador da equipa. O parser posicional de PDF (P2) deve ser **validado contra** esse JSON. Schema e mapeamento em `docs/esquema_json_corpus.md`. Regra:
   - JSON em bruto -> `DocumentoBruto` -> `analisador_metadados` -> `Acordao`
   - JSON estruturado -> `carregador_acordaos_json` -> `Acordao`
 

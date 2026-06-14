@@ -1,0 +1,11 @@
+{
+  "id_execucao": "execucao_001",
+  "semente": 42,
+  "vetorizador": "vetorizador/vocabulario.json",
+  "idf": "vetorizador/idf.npy",
+  "configuracao_vetorizador": "vetorizador/configuracao.json",
+  "categorias": "categorias/id_para_categoria.json",
+  "configuracao_modelo": "modelo/configuracao_modelo.json",
+  "pesos": "modelo/pesos.pth",
+  "metricas": "metricas.json"
+}
