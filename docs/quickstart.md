@@ -34,7 +34,24 @@ Encontra a tua linha. Lê a tua **especificação** (`docs/especificacoes/`) e o
 
 ---
 
-## 3. Instalar o que precisas (ordem certa)
+## 3. Links, downloads e instalação
+
+### Links rápidos (guarda esta lista)
+
+- **📂 Dados do projeto** (PDFs + JSONs) — descarrega aqui: <https://drive.google.com/file/d/1n3XGcyk1ZoSf5vbaQYhZ5BGivebt98WG/view?usp=drive_link>
+- **💻 Repositório** (GitHub): <https://github.com/geek2geeks/jurimetria_app>
+- **📋 Quadro Jira** (projeto SCRUM): <https://fixola198.atlassian.net/jira/software/projects/SCRUM/boards/1>
+- **Git**: <https://git-scm.com/download/win> (Windows) · macOS: `xcode-select --install` ou Homebrew
+- **Anaconda** (Python 3.11): <https://www.anaconda.com/download>
+- **VS Code** (editor recomendado para todos): <https://code.visualstudio.com/download>
+- **Google Antigravity** — IA grátis (Gemini): <https://antigravity.google/>
+- **OpenCode** — IA (alternativa): <https://opencode.ai/>
+- **GitHub Spec Kit** `v0.10.2`: <https://github.com/github/spec-kit>
+- **uv** (instala o Spec Kit): <https://docs.astral.sh/uv/>
+
+> **Dados:** descarrega o corpus do link acima, coloca-o localmente e define `DATA_DIR` no teu `.env` (ver `data/README.md`). **Não republiques** o corpus nem o envies a uma IA externa (RGPD).
+
+### Instalar (ordem certa)
 
 Guia completo e detalhado, Windows **e** macOS: `docs/instalacao_software.md`. Resumo:
 
@@ -60,7 +77,11 @@ Guia completo e detalhado, Windows **e** macOS: `docs/instalacao_software.md`. R
    ```
 
 ### Só se fores usar IA para programar (opcional)
-5. **OpenCode** (`>=1.14.24`), **uv**, **GitHub Spec Kit `v0.10.2`**, ligação ao **DeepSeek V4 Pro** com `/connect`. Passos exatos em `docs/instalacao_software.md` (secções 3 a 6).
+5. Escolhe **uma** opção de IA:
+   - **Opção simples e grátis:** **Google Antigravity** (<https://antigravity.google/>) — IDE com IA (Gemini), grátis em preview.
+   - **Opção avançada (SDD):** **OpenCode** (`>=1.14.24`) + **uv** + **GitHub Spec Kit `v0.10.2`** + ligação ao **DeepSeek V4 Pro** com `/connect`. Passos exatos em `docs/instalacao_software.md` (secções 3 a 6).
+
+   Em qualquer caso: declara o uso de IA no PR, lê todo o código gerado e **nunca** envies PDFs/JSON reais, dados pessoais ou chaves para a IA.
 
 > **Importante:** o professor aprovou a equipa, mas **não** deu autorização específica para código gerado por IA. Confirma as regras da disciplina. Se usares IA: tu continuas responsável pelo código, lês tudo, corres os testes e **declaras no Pull Request** que usaste IA. **Nunca** envies PDFs/JSON reais, dados pessoais ou chaves para a IA.
 
