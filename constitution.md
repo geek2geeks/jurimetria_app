@@ -115,7 +115,7 @@ Se um membro usar IA para programar:
 - deve declarar o uso de IA no Pull Request;
 - deve obter revisão humana antes do merge.
 
-Pedro é o revisor obrigatório dos Pull Requests dos restantes membros. Um PR criado pelo próprio Pedro deve ter outro membro humano como revisor; autoaprovação não conta como revisão.
+Pedro é o revisor obrigatório dos Pull Requests dos restantes membros. Como administrador e responsável técnico, Pedro pode validar e fazer merge dos próprios PRs, desde que os testes sejam executados e a decisão fique documentada no PR.
 
 Ferramentas recomendadas, mas não obrigatórias:
 

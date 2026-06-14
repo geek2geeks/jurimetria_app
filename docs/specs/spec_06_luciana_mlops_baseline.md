@@ -3,6 +3,9 @@
 ## Assignee
 Luciana — Baseline, métricas e avaliação (P6)
 
+## Jira
+`SCRUM-10`
+
 ## Plain-language goal
 A verdadeira prova matemática do projeto reside na tua análise. Vais cruzar as respostas dadas pela rede do Helton (P5) com as respostas verdadeiras fornecidas pela Gleicy (P4). Além disso, crias uma Baseline Cega de controlo. No final do processo, deves exportar os resultados numéricos gerados pela comparação para um ficheiro estático `metrics.json` de modo a que fiquem enraizados no Manifest.
 
@@ -45,8 +48,8 @@ Cria `tests/test_evaluation.py` para garantires assertivamente que a tua baselin
 - Consomes os outputs de modelo e de verificação. Ajudas o Tech Lead (P8) a aglomerar estas informações de forma acessível no sistema.
 
 ## Git workflow
-- Branch: `feature/<JIRA-KEY>-metrics-baseline`
-- Commit: `[<JIRA-KEY>] Implement baseline model and export metric calculation`
+- Branch: `feature/SCRUM-10-metrics-baseline`
+- Commit: `[SCRUM-10] Implement baseline model and export metric calculation`
 
 ## Commenting expectations
 - Docstrings objetivas nas funções matemáticas descrevendo o formato pretendido do `y`.

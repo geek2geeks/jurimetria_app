@@ -71,7 +71,7 @@ Todo PR deve incluir:
 - indicação de apoio de IA;
 - screenshots apenas quando relevantes e sem segredos.
 
-Pedro revê os PRs dos colegas. Um PR do Pedro precisa de outro revisor humano.
+Pedro revê os PRs dos colegas. Como administrador e responsável técnico, Pedro pode validar os próprios PRs, desde que documente os testes, riscos e decisão.
 
 ## 5. Checklist de revisão
 

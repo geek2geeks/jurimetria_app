@@ -3,6 +3,9 @@
 ## Assignee
 Sandro — Interface de Inferência MLOps e LLM Auxiliar Opcional (P7)
 
+## Jira
+`SCRUM-11`
+
 ## Plain-language goal
 A tua missão foca-se na reconstrução realística do projeto, contendo duas vertentes:
 Vertente Principal (Must Have): Vais construir um script que recebe um ID de treino (`run_id`). Lendo o `manifest.json` com essa identificação, reconstróis perfeitamente a lógica da equipa (Vectorizador, Mapas de Rótulos, e Modelo) para classificar de forma estanque e isolada novos sumários de PDF da rua. Antes de aplicares a matemática do vector, deves importar a mesma rotina de limpeza do teu colega Gustavo, garantindo que a Inferencia avalia textos padronizados.
@@ -51,8 +54,8 @@ Cria testes unitários no ficheiro `tests/test_inference.py`. Podes usar "Fake m
 - O teu módulo consome implicitamente o trabalho dos restantes alunos, desde as funções lógicas do P3 e P4, ao manifesto e artefatos de P5 e P8.
 
 ## Git workflow
-- Branch: `feature/<JIRA-KEY>-inference-engine`
-- Commit: `[<JIRA-KEY>] Implement manifest-driven inference pipeline`
+- Branch: `feature/SCRUM-11-inference-engine`
+- Commit: `[SCRUM-11] Implement manifest-driven inference pipeline`
 
 ## Commenting expectations
 - Avisos expressos a avisar os outros alunos contra o hardcoding de API Keys.

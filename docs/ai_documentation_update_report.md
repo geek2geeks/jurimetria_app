@@ -37,7 +37,7 @@ A documentação passou a explicar um fluxo opcional e controlado de desenvolvim
 - A resposta de IA é sempre um rascunho.
 - Revisão humana é obrigatória.
 - Pedro revê os PRs dos colegas.
-- PRs do Pedro precisam de outro revisor.
+- Pedro pode validar os próprios PRs como administrador, documentando testes, riscos e decisão.
 - O uso de IA deve ser declarado.
 - Dados jurídicos reais, dados pessoais e segredos não podem ser enviados a serviços externos.
 - OpenCode, DeepSeek e Spec Kit são recomendações, não requisitos académicos.
@@ -66,8 +66,9 @@ Foram adicionadas instruções para Windows e macOS:
 - As alterações estão publicadas na branch `codex/onboarding-ai-workflow` e no Pull Request 1.
 - Pedro e um colega já têm acesso; seis convites GitHub aguardam aceitação.
 - A branch `main` está protegida e exige uma aprovação humana.
-- O script Jira foi preparado para criar oito tarefas de forma idempotente.
-- A execução real requer um token novo, email da conta administradora e emails Atlassian dos membros; o script resolve os `accountId`.
+- As oito tarefas foram criadas pelo Atlassian CLI: `SCRUM-5` a `SCRUM-12`.
+- `SCRUM-12` está atribuída ao Pedro. Os emails dos restantes colegas foram recebidos, mas as contas ainda não estão disponíveis no site Jira para atribuição.
+- A autenticação utilizou OAuth; o token exposto não foi reutilizado.
 
 ## Riscos pendentes
 
@@ -80,9 +81,9 @@ Foram adicionadas instruções para Windows e macOS:
 ## Próximas ações
 
 1. Revogar e substituir o token Jira exposto.
-2. Configurar os responsáveis Jira localmente.
-3. Executar a simulação e depois criar as tarefas.
-4. Obter revisão independente e fazer merge do Pull Request 1.
+2. Convidar ou ativar os sete colegas no site Jira e atribuir `SCRUM-5` a `SCRUM-11`.
+3. Confirmar que todos os colegas conseguem abrir as respetivas tarefas.
+4. Pedro valida e faz merge do Pull Request 1, documentando o bypass do CI bloqueado pela faturação.
 5. Resolver o bloqueio de faturação do GitHub Actions.
 6. Convidar os colegas.
 7. Cada membro instala o ambiente, lê o onboarding e começa pela sua spec.

@@ -3,6 +3,9 @@
 ## Assignee
 Pedro — Tech Lead, Integração, Requisitos, e MLOps (P8)
 
+## Jira
+`SCRUM-12`
+
 ## Plain-language goal
 Como responsável técnico do fluxo, assumes o papel de garantir que todos os blocos de código encaixam na perfeição. Trabalhas na génese dos contratos de dados (`schemas.py` com a Daniela) para assegurar formatos consistentes, construindo o motor integrador do projeto (`dataset_builder.py`). Este script processa as dezenas de `Acordaos`, passa-os pelo módulo de limpeza, e solidifica-os sob a forma do dataset pronto: `DatasetRow`. Além de dominares a esteira do CI/CD com o Github Actions, tens a incumbência final de emitir o `manifest.json`.
 
@@ -59,7 +62,7 @@ Mantém uma bateria de testes rígida que possa processar rapidamente pequenas a
 
 ## Git workflow
 - Garante o code review na main e monitoriza as interações gerais do grupo ao submeter as suas branches funcionais.
-- Usa uma branch `feature/<JIRA-KEY>-descricao` e obtém revisão de outro membro nos teus próprios PRs.
+- Usa uma branch `feature/SCRUM-12-integracao`. Podes validar o teu próprio PR como administrador, documentando os testes, riscos e decisão.
 
 ## Commenting expectations
 - Nos teus ficheiros de Pipeline (`main.py` e construtores), o foco dos comentários assenta em demarcar limites de módulos (por que limitámos os campos nulos ali, justificação das sementes, etc.).

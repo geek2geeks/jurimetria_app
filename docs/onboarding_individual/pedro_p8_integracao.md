@@ -78,4 +78,4 @@ Podes dizer:
 
 ## Como usar IA na tua tarefa
 
-Usa IA para comparar contratos, gerar checklists e encontrar riscos entre módulos, nunca para aprovar automaticamente um PR. Revê cada mudança arquitetural e protege dados e segredos. Os teus próprios PRs precisam de revisão por outro membro humano.
+Usa IA para comparar contratos, gerar checklists e encontrar riscos entre módulos. Revê cada mudança arquitetural e protege dados e segredos. Podes validar os teus próprios PRs como administrador, mas tens de documentar os testes, riscos e decisão.

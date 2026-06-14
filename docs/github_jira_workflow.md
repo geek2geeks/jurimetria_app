@@ -100,7 +100,7 @@ Ferramenta e utilização, se aplicável.
 - ...
 ```
 
-Pede revisão ao Pedro. Se o autor for Pedro, pede revisão a outro membro.
+Pede revisão ao Pedro. Se o autor for Pedro, ele pode validar o próprio PR como administrador, documentando os testes e a decisão.
 
 ## 8. Depois da revisão
 
@@ -135,7 +135,7 @@ Usa `Blocked` quando precisares de uma decisão, acesso ou entrega de outro memb
 
 - confirmar responsáveis e dependências no Jira;
 - rever todos os PRs dos colegas;
-- não aprovar o próprio PR;
+- documentar explicitamente testes, riscos e decisão quando validar o próprio PR;
 - impedir merge com testes falhados;
 - manter contratos e arquitetura;
 - ligar tickets aos PRs;

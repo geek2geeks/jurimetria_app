@@ -3,6 +3,9 @@
 ## Assignee
 Daniela — Parsing posicional de metadados e Adaptação (P2)
 
+## Jira
+`SCRUM-6`
+
 ## Plain-language goal
 A tua missão é transformar o texto bruto (`RawDocument`) num objeto bem definido e estruturado chamado `Acordao`. Irás colaborar com o Tech Lead para definir as classes em `schemas.py`, criar as expressões regulares para identificar secções do PDF, e criar um adaptador (`json_acordao_loader.py`) capaz de converter diretamente JSONs já estruturados (bypass) no formato `Acordao`.
 
@@ -46,8 +49,8 @@ Cria testes assertivos onde forces `None` em certos campos para garantir que o c
 - Consomes o `RawDocument` do P1. Coordenarás o ficheiro `schemas.py` com o Pedro (P8).
 
 ## Git workflow
-- Branch sugerida: `feature/<JIRA-KEY>-metadata-parser`
-- Commit: `[<JIRA-KEY>] Implement Parser and Struct JSON Adapter`
+- Branch sugerida: `feature/SCRUM-6-metadata-parser`
+- Commit: `[SCRUM-6] Implement Parser and Struct JSON Adapter`
 
 ## Commenting expectations
 - Docstring obrigatória explicando como o adaptador JSON funciona.

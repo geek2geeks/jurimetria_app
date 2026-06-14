@@ -3,6 +3,9 @@
 ## Assignee
 Helton — Modelo PyTorch e Treino Neural (P5)
 
+## Jira
+`SCRUM-9`
+
 ## Plain-language goal
 A tua fase envolve arquitetar a Rede Neuronal Artificial da vossa IA usando PyTorch. Vais receber as matrizes da Gleicy, passá-las pelos `Dataloaders`, e treinar a rede para prever as probabilidades das 5 decisões (MANTIDA, REVOGADA, etc.). No final, a regra mais importante é exportar corretamente os teus "pesos" para a pasta do MLOps (Artifacts).
 
@@ -54,8 +57,8 @@ Cria `tests/test_pytorch.py`. Podes usar tensores dummy aleatórios (`torch.rand
 - Baseias-te no processamento das matrizes P4 e entregas o estado do modelo P5 à Pipeline central que coordena a gravação do `manifest.json`.
 
 ## Git workflow
-- Branch: `feature/<JIRA-KEY>-pytorch-mlp`
-- Commit: `[<JIRA-KEY>] Add PyTorch MLP neural network and state_dict serialization`
+- Branch: `feature/SCRUM-9-pytorch-mlp`
+- Commit: `[SCRUM-9] Add PyTorch MLP neural network and state_dict serialization`
 
 ## Commenting expectations
 - Docstrings a explicar as dimensões de entrada e de saída (logits).

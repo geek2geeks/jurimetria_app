@@ -3,6 +3,9 @@
 ## Assignee
 Alessandro — Ingestão de dados / Data Loader (P1)
 
+## Jira
+`SCRUM-5`
+
 ## Plain-language goal
 A tua missão é carregar os ficheiros das pastas de dados num formato estruturado inicial para entregar à equipa de parsing. Vais focar-te em duas rotas: uma que abre `.pdf` bruto e extrai a string longa de texto, e outra que lê `.json` caso ele não esteja previamente estruturado. Ambas as rotas emitem o contrato base `RawDocument`.
 
@@ -50,8 +53,8 @@ Comando base: `python -m unittest tests/test_loader.py`.
 - Entregas o `RawDocument` à Daniela (P2) que vai aplicar as regras de extração.
 
 ## Git workflow
-- Branch sugerida: `feature/<JIRA-KEY>-loader`
-- Commit sugerido: `[<JIRA-KEY>] Add generator loaders for PDF and Raw JSON`
+- Branch sugerida: `feature/SCRUM-5-loader`
+- Commit sugerido: `[SCRUM-5] Add generator loaders for PDF and Raw JSON`
 
 ## Commenting expectations
 - Docstring a explicar o uso do Iterador (Yield) para controlo de memória.

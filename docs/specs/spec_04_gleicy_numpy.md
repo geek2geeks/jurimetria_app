@@ -3,6 +3,9 @@
 ## Assignee
 Gleicy — Vetorização NumPy e Split dos Dados (P4)
 
+## Jira
+`SCRUM-8`
+
 ## Plain-language goal
 A tua missão é transformar palavras em números (TF-IDF Vectorization). O Pedro fornece-te uma lista estruturada de instâncias `DatasetRow`. Tu deves dividir este conjunto (em Treino e Teste) usando exclusivamente código teu (NumPy), aplicar a magia do TF-IDF para encontrares os pesos das palavras e converter as descrições textuais em matrizes dimensionais para treinar o PyTorch.
 
@@ -49,8 +52,8 @@ Comando: `python -m unittest tests/test_numpy.py`. Cobre o cálculo exato do TF-
 - Gravas os dados para P5 (Helton) alimentar a rede neural, e disponibilizas os teus artefactos para P7 (Sandro).
 
 ## Git workflow
-- Branch sugerida: `feature/<JIRA-KEY>-numpy-vector`
-- Commit: `[<JIRA-KEY>] Implement custom NumPy TFIDF vectorizer and split logic`
+- Branch sugerida: `feature/SCRUM-8-numpy-vector`
+- Commit: `[SCRUM-8] Implement custom NumPy TFIDF vectorizer and split logic`
 
 ## Commenting expectations
 - Adiciona docstrings a detalhar o formato e dimensões ("Shapes") exatos de `X` e `y`.

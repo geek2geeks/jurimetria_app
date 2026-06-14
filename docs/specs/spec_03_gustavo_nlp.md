@@ -3,6 +3,9 @@
 ## Assignee
 Gustavo — Text Cleaner and Label Normalizer (P3)
 
+## Jira
+`SCRUM-7`
+
 ## Plain-language goal
 A tua missão é limpar o texto recebido para que a equipa de Machine Learning o possa utilizar corretamente. Recebes o objeto `Acordao`. O Sumário dentro deste objeto pode estar minado de ruído como "Powered By TCPDF" ou formatação estranha. O teu dever é limpar isto e, mais importante, normalizar a decisão solta (e.g., "julgado totalmente improcedente") numa das 5 Classes Matemáticas fixas: MANTIDA, REVOGADA, ANULADA, NAO_CONHECIDA, OUTRA.
 
@@ -43,8 +46,8 @@ Comando: `python -m unittest tests/test_cleaner.py`. Cobre casos em que as decis
 - O teu trabalho consome `Acordao` (P2) e ajuda a alimentar o `DatasetRow` (P8).
 
 ## Git workflow
-- Branch sugerida: `feature/<JIRA-KEY>-text-cleaner`
-- Commit: `[<JIRA-KEY>] Add text cleaner and decision label normalizer`
+- Branch sugerida: `feature/SCRUM-7-text-cleaner`
+- Commit: `[SCRUM-7] Add text cleaner and decision label normalizer`
 
 ## Commenting expectations
 - Justifica com comentários breves as regras mais difíceis de mapeamento jurídico (ex: por que "parcialmente provido" mapeia para REVOGADA?).

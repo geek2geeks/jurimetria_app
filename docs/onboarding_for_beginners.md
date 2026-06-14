@@ -96,7 +96,7 @@ No GitHub:
 5. declara se usaste IA;
 6. pede revisão ao Pedro.
 
-Se Pedro for o autor, outro membro deve rever.
+Se Pedro for o autor, pode validar o próprio PR como administrador, deixando os testes e a decisão registados.
 
 ## 7. Usar IA
 

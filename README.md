@@ -68,7 +68,22 @@ git diff
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-O PR deve indicar o ticket Jira, testes executados e se houve apoio de IA. Pedro revê os PRs dos colegas. Os PRs do Pedro precisam de outro revisor humano.
+O PR deve indicar o ticket Jira, testes executados e se houve apoio de IA. Pedro revê os PRs dos colegas e pode validar os próprios PRs como administrador, documentando os testes e a decisão.
+
+## Tarefas Jira da equipa
+
+| Pessoa | Ticket |
+|---|---|
+| Alessandro | `SCRUM-5` |
+| Daniela | `SCRUM-6` |
+| Gustavo | `SCRUM-7` |
+| Gleicy | `SCRUM-8` |
+| Helton | `SCRUM-9` |
+| Luciana | `SCRUM-10` |
+| Sandro | `SCRUM-11` |
+| Pedro | `SCRUM-12` |
+
+As tarefas estão no projeto Jira `SCRUM`. A tarefa do Pedro está atribuída. Os emails dos restantes colegas já foram recebidos, mas as contas ainda precisam de ser convidadas ou ativadas no site Jira antes da atribuição nominal.
 
 ## Dados
 

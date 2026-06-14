@@ -43,4 +43,4 @@ Ninguém precisa saber tudo. Cada etapa foi desenhada para ter uma fronteira cla
 6. Declara se usaste IA.
 7. Pede revisão ao Pedro.
 
-Quando Pedro for o autor, outro membro deve fazer a revisão.
+Quando Pedro for o autor, pode validar o próprio PR como administrador, documentando testes e decisão.

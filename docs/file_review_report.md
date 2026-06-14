@@ -45,9 +45,9 @@ O projeto só deve ser distribuído depois de:
 |---|---|---|
 | Site configurado | Indício local | `fixola198.atlassian.net`. |
 | Projeto esperado | Indício local | Chave `SCRUM`; ainda precisa de confirmação autenticada. |
-| Tarefas | Não confirmadas | O script anterior não provava que foram criadas. |
-| Responsáveis | Pendente | O script pode resolver os `accountId` a partir dos emails Atlassian, depois de existir um token novo. |
-| Token | Comprometido | Deve ser revogado e substituído antes de usar a API. |
+| Tarefas | Criadas | `SCRUM-5` a `SCRUM-12`, uma por membro. |
+| Responsáveis | Parcial | Pedro está atribuído a `SCRUM-12`; os sete emails foram recebidos, mas as contas ainda precisam de acesso ao site Jira. |
+| Autenticação | OK | Atlassian CLI autenticado por OAuth; o token exposto não foi reutilizado. |
 
 ## Documentação
 
@@ -75,9 +75,7 @@ O projeto só deve ser distribuído depois de:
 
 - Confirmar com o professor se o uso de IA é permitido para a avaliação.
 - Pedir aos seis colegas com convite pendente que aceitem o acesso ao GitHub.
-- Definir quem revê os PRs do Pedro.
-- Rodar a chave Jira exposta.
-- Obter os emails para convites e os `accountId` para atribuição.
-- Confirmar o projeto Jira `SCRUM`.
-- Obter revisão independente e fazer merge do Pull Request 1.
+- Revogar a chave Jira exposta, mesmo não tendo sido reutilizada.
+- Convidar ou ativar os sete colegas no site Jira e atribuir `SCRUM-5` a `SCRUM-11`.
+- Pedro valida e faz merge do Pull Request 1, documentando o bypass do CI bloqueado pela faturação.
 - Resolver o bloqueio de faturação do GitHub e relançar o workflow.

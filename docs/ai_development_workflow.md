@@ -64,7 +64,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 - confirmar que não existem segredos nem dados reais no diff;
 - abrir um Pull Request.
 
-Pedro é o revisor obrigatório dos PRs dos outros membros. Quando Pedro for o autor, outro membro deve rever. Autoaprovação não é revisão humana.
+Pedro é o revisor obrigatório dos PRs dos outros membros. Quando Pedro for o autor, pode validar e fazer merge do próprio PR como administrador, desde que registe os testes, riscos e decisão no PR.
 
 ## O que a IA pode fazer
 
