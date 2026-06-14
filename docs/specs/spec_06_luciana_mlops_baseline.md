@@ -1,29 +1,53 @@
-# Especificação: Baseline e ML Ops
+# Spec 06 — Evaluation, Metrics and Baseline (Métricas e Avaliação MLOps)
 
-**Assignee:** Luciana (P6 - Especialista MLOps - Parte 1)
-**Fase do SDD:** Specify
+## Assignee
+Luciana — Baseline, métricas e avaliação (P6)
 
-## 1. Contexto (O Porquê)
-Na universidade, e no mercado de trabalho, de nada serve treinar um modelo de PyTorch se ele adivinhar resultados de forma ingénua. Se 80% das sentenças em Portugal forem "MANTIDA", uma rede neuronal defeituosa que preveja sempre "MANTIDA" terá um Accuracy brilhante de 80%, mas 0 Inteligência Artificial real. A Luciana será responsável pelo ceticismo metodológico, a Baseline e o pipeline de Métricas Definitivo do PyTorch.
+## Plain-language goal
+A verdadeira prova matemática do projeto reside na tua análise. Vais cruzar as respostas dadas pela rede do Helton (P5) com as respostas verdadeiras fornecidas pela Gleicy (P4). Além disso, crias uma Baseline Cega de controlo. No final do processo, deves exportar os resultados numéricos gerados pela comparação para um ficheiro estático `metrics.json` de modo a que fiquem enraizados no Manifest.
 
-## 2. Tarefa Técnica (O Quê)
-1. Construir `src/evaluation/metrics.py`.
-2. Desenhar a Baseline Cega (`MajorityClassBaseline`): uma classe/script que observa o vetor de treino `y_train` (criado de forma "Dummy Data" na Semana 1), descobre a classe que mais se repete e prevê **apenas e sempre essa classe** para o Test Set.
-3. Desenvolver o motor métrico: Calcular e imprimir as métricas `Accuracy` e `Macro-F1 Score`. A F1 Macro é o verdadeiro critério de sucesso porque penaliza algoritmos cegos num contexto de classes desequilibradas.
+## Why this matters
+Garante o escrutínio e prova empírica. Num dataset desequilibrado, avaliar apenas com `Accuracy` pode apresentar valores artificialmente elevados. O projeto precisa do teu raciocínio usando `Macro-F1`. Além de provares isso no código, exportares a tua análise em `.json` imortaliza as métricas daquele `run` de modelo na pipeline.
 
-## 3. Inputs e Outputs
-- **Input (MOCK / Fase 1):** O vetor `y_true` de Teste (Dummy) e o `y_pred` de Teste (que o Helton ou a Baseline produzirão). Ambos `np.ndarray` ou Tensores.
-- **Output:** Um dicionário ou dicionário impresso (`stdout`) de performance. `{"Accuracy": 0.80, "Macro_F1": 0.25}`. E guardar os plots em `docs/metrics_report.md`.
+## Inputs
+- Array de previsões do teu modelo (`y_pred`).
+- Array de realidades verdadeiras do teste (`y_true`).
 
-## 4. Regras e Restrições SDD
-- **Transparência Absoluta:** O código tem a autorização explícita para usar as métricas do pacote `scikit-learn.metrics` (pois o numpy foi restrito apenas à feature engineering da Gleicy), usando `f1_score(average="macro")`.
+## Outputs
+- Registo da avaliação `metrics.json`.
 
-## 5. Critérios de Aceitação (DoD)
-- [ ] Ao enviar o Dummy Data desequilibrado para a Baseline, a métrica Macro-F1 deve demonstrar estar drasticamente inferior à Accuracy Geral (confirmando o perigo estatístico).
-- [ ] Módulo com `unittests` em `tests/test_evaluation.py`.
+## Files to create or edit
+- `src/evaluation/metrics.py`
+- `tests/test_evaluation.py`
 
----
+## Step-by-step checklist
+- [ ] Confirma as exigências de baseline e isolamento da biblioteca sklearn na `constitution.md`.
+- [ ] Desenha a classe `MajorityClassBaseline` - a estratégia cega que prevê sempre o número mais prevalente no treino.
+- [ ] Importa as tuas métricas autorizadas da sklearn: `accuracy_score`, `f1_score`.
+- [ ] Cria a rotina `evaluate_run(y_true, y_pred) -> dict` que irá formatar o dicionário dos resultados (Macro F1 incluído).
+- [ ] Exporta esses resultados `json.dump` na diretoria correspondente dos artefactos.
 
-> **Instrução para Agente de IA:**
-> Leia a Constituição em `docs/`.
-> Invoque `/speckit.plan`: Planeie o desenho arquitetural do avaliador (`evaluator`), detalhando como irá ler o ficheiro `.pt` do PyTorch que o Helton gravar no disco e passá-lo pelas métricas de Teste de forma modularizada sem estourar o GPU.
+## Example
+Exemplo da tua exportação:
+`{"accuracy": 0.81, "macro_f1": 0.66, "baseline_macro_f1": 0.20}`
+
+## Tests
+Cria `tests/test_evaluation.py` para garantires assertivamente que a tua baseline funciona devidamente com *mock arrays*.
+
+## Definition of Done
+- Provas unitárias criadas que comparam e provam as limitações de usar a métrica Accuracy sozinha.
+- Módulo exporta um `.json` funcional localmente.
+
+## What not to do
+- Não programes as métricas unicamente com "prints" transitórios no ecrã. O relatório MLOps tem de gravar.
+
+## Dependencies
+- Consomes os outputs de modelo e de verificação. Ajudas o Tech Lead (P8) a aglomerar estas informações de forma acessível no sistema.
+
+## Git workflow
+- Branch: `feature/<JIRA-KEY>-metrics-baseline`
+- Commit: `[<JIRA-KEY>] Implement baseline model and export metric calculation`
+
+## Commenting expectations
+- Docstrings objetivas nas funções matemáticas descrevendo o formato pretendido do `y`.
+- Justifica com notas simples as escolhas algorítmicas ao nível de avaliação contra distribuições assimétricas.

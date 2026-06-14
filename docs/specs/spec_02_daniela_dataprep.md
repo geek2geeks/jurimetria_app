@@ -1,41 +1,54 @@
-# Especificação: Parsing Posicional de Metadados
+# Spec 02 — Positional Metadata Parser (Data Validation e Mapeamento)
 
-**Assignee:** Daniela (P2 - Data Prep)
-**Fase do SDD:** Specify
+## Assignee
+Daniela — Parsing posicional de metadados e Adaptação (P2)
 
-## 1. Contexto (O Porquê)
-Os nossos acórdãos portugueses sofrem de um problema estrutural severo: são PDFs ou JSONs gerados a partir de um layout de 2 colunas. Uma leitura linear ingénua cruza e funde a coluna do "Relator" com a coluna do "Meio Processual". Precisamos de algoritmos inteligentes (parsing posicional ou âncoras textuais) para garantir que o *Feature Engineer* recebe as colunas perfeitas.
+## Plain-language goal
+A tua missão é transformar o texto bruto (`RawDocument`) num objeto bem definido e estruturado chamado `Acordao`. Irás colaborar com o Tech Lead para definir as classes em `schemas.py`, criar as expressões regulares para identificar secções do PDF, e criar um adaptador (`json_acordao_loader.py`) capaz de converter diretamente JSONs já estruturados (bypass) no formato `Acordao`.
 
-## 2. Tarefa Técnica (O Quê)
-1. Construir o módulo de parser `src/preprocessing/metadata_parser.py`.
-2. A função principal deve receber o dicionário cru gerado pelo `data_loader.py` do Alessandro.
-3. Isolar os campos críticos que a rede neural vai precisar: `ECLI`, `Tribunal`, `Descritores`, `Sumario_Texto`, `Decisao`.
-4. O parser deve usar expressões regulares (`re`) rigorosas e delimitadores fixos para contornar o salto de linhas.
-5. Se um documento não tiver a secção `Decisão` preenchida (campo vital), o parser deve retornar `None` para esse campo específico em vez de tentar adivinhar com o parágrafo seguinte.
+## Why this matters
+Garante o isolamento do pipeline. Ao converter tudo para a classe `Acordao`, as tarefas seguintes de Machine Learning não precisam de saber se os dados vieram de um PDF sujo ou de um JSON perfeitamente extraído. O contrato passa a ser estável e seguro.
 
-## 3. Inputs e Outputs
-- **Input:** `Dict[str, Any]` (O output exato gerado pelo P1).
-- **Output:** Objeto Data Class ou dicionário padronizado:
-  ```python
-  @dataclass
-  class Acordao:
-      ecli: str
-      tribunal: str
-      descritores: List[str]
-      sumario: str
-      decisao: Optional[str]
-  ```
+## Inputs
+- Um objeto nativo: `RawDocument` (da rota do PDF ou JSON cru).
+- Um caminho de ficheiro `.json` para o adaptador estruturado.
 
-## 4. Regras e Restrições SDD
-- **Resiliência a Nulos:** O código Python deve antecipar falhas de regex (usar `.get()` ou blocos `try/except`).
-- **Data Classes:** O uso de `@dataclass` (módulo nativo do Python) é obrigatório para representar a estrutura do Acórdão final.
+## Outputs
+- O objeto central do projeto: `Acordao`.
 
-## 5. Critérios de Aceitação (DoD)
-- [ ] O módulo inclui testes unitários em `tests/test_parser.py` testando documentos reais com 2 colunas.
-- [ ] Documentos em que a decisão esteja explicitamente omitida não quebram a pipeline, resultando num objeto cujo atributo `decisao` é `None`.
+## Files to create or edit
+- `src/preprocessing/metadata_parser.py`
+- `src/data/schemas.py` (Copropriedade com o Pedro)
+- `src/data/json_acordao_loader.py`
+- `tests/test_parser.py`
 
----
+## Step-by-step checklist
+- [ ] Lê a nova `constitution.md`.
+- [ ] Define em conjunto com o P8 o `schemas.py`, contendo as classes `@dataclass RawDocument`, `Acordao` e `DatasetRow`.
+- [ ] Em `metadata_parser.py`, cria a função `parse_raw_document(doc: RawDocument) -> Acordao`. Extrai os campos como `relator`, `ecli` e `sumario` do texto bruto.
+- [ ] Trata o *JSON estruturado*: Cria o `json_acordao_loader.py` para ler ficheiros JSON (que já têm os campos separados) e instanciá-los rapidamente como objetos `Acordao`. Isto vai acelerar o desenvolvimento do resto da equipa.
+- [ ] Se uma chave no texto (Ex. *Decisão:*) não aparecer, define explicitamente esse campo como `None`.
 
-> **Instrução para Agente de IA:**
-> Antes de gerar o Python, garante que tens acesso ao `constitution.md`. 
-> Executa `/speckit.clarify`: Faz perguntas concretas à Daniela sobre quais são os "tokens" e marcadores âncora que a Regex deve usar. Após o esclarecimento, gera o Plano Arquitetural (`/speckit.plan`).
+## Example
+`adapter = load_acordaos_from_json("amostra_estruturada.json")` -> Devolve uma lista de instâncias `Acordao`.
+
+## Tests
+Cria testes assertivos onde forces `None` em certos campos para garantir que o código não falha (`python -m unittest tests/test_parser.py`).
+
+## Definition of Done
+- A emissão para os módulos a jusante é estritamente a dataclass `Acordao`.
+- Tolerância a erros (campos não encontrados = `None`).
+
+## What not to do
+- Não passes dicionários soltos (`dict`). Garante que a conversão para objeto ocorre imediatamente.
+
+## Dependencies
+- Consomes o `RawDocument` do P1. Coordenarás o ficheiro `schemas.py` com o Pedro (P8).
+
+## Git workflow
+- Branch sugerida: `feature/<JIRA-KEY>-metadata-parser`
+- Commit: `[<JIRA-KEY>] Implement Parser and Struct JSON Adapter`
+
+## Commenting expectations
+- Docstring obrigatória explicando como o adaptador JSON funciona.
+- Comentários justificando as âncoras de pesquisa no texto (e.g., porque pesquisamos "Decisão Integral:").

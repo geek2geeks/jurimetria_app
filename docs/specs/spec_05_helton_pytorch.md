@@ -1,32 +1,62 @@
-# Especificação: Arquitetura Neuronal (PyTorch)
+# Spec 05 — PyTorch Model and Training (O Cérebro da Operação)
 
-**Assignee:** Helton (P5 - Arquiteto PyTorch)
-**Fase do SDD:** Specify
+## Assignee
+Helton — Modelo PyTorch e Treino Neural (P5)
 
-## 1. Contexto (O Porquê)
-O modelo preditivo (PyTorch) é a máquina que descobrirá padrões subjacentes entre as palavras usadas num recurso e a probabilidade dele ser rejeitado ou revogado pelos juízes em Portugal. Nesta 1ª Semana, o módulo da Gleicy (NumPy) ainda não estará 100% pronto. Portanto, o Helton construirá o esqueleto robusto da rede neural recorrendo a "Fake Data" / Tensores gerados aleatoriamente pelo PyTorch. 
+## Plain-language goal
+A tua fase envolve arquitetar a Rede Neuronal Artificial da vossa IA usando PyTorch. Vais receber as matrizes da Gleicy, passá-las pelos `Dataloaders`, e treinar a rede para prever as probabilidades das 5 decisões (MANTIDA, REVOGADA, etc.). No final, a regra mais importante é exportar corretamente os teus "pesos" para a pasta do MLOps (Artifacts).
 
-## 2. Tarefa Técnica (O Quê)
-1. Criar os módulos `src/models/classifier.py` e `src/training/train.py`.
-2. Desenhar a classe `class JurisNet(nn.Module)`. Exigência: uma Rede Neuronal Multilayer Perceptron (MLP) limpa, com camadas Lineares (`nn.Linear`), funções de ativação ReLu e um bom regulador como Dropout.
-3. Montar as super classes `Dataset` (para herdar a classe abstrata do torch) e usar o `DataLoader` (para gerir *mini-batches*).
-4. O loop de treino deve calcular o `CrossEntropyLoss` e permitir otimização via `Adam`.
+## Why this matters
+O módulo central de "Deep Learning" ocorre no teu código. Sem exportares de forma isolada os teus parâmetros exatos de construção e pesos, a Inferência de vida real não terá as instruções para carregar a máquina offline.
 
-## 3. Inputs e Outputs
-- **Input (MOCK / Fase 1):** Tensores aleatórios simulando a saída da Gleicy. `X_dummy = torch.randn(100, 5000)` e `y_dummy = torch.randint(0, 4, (100,))`.
-- **Output:** O modelo treinado guardado em formato PyTorch: `model_weights.pt` e o log de métricas das Epochs (Training Loss e Validation Loss).
+## Inputs
+Matrizes NumPy de Treino (`X_train`, `X_test`, `y_train`) criadas pelo módulo P4.
 
-## 4. Regras e Restrições SDD
-- **Uso Estrito:** Exclusividade da framework PyTorch (`import torch`, `torch.nn`).
-- **Reproducibilidade Académica:** Configurar uma Seed global fixa (`torch.manual_seed(42)`) no topo do ficheiro `train.py` para garantir que as apresentações têm resultados replicáveis em bancada.
+## Outputs
+- O dicionário seguro de pesos da rede: `weights.pth`.
+- O manifesto de configuração visual: `model_config.json`. Ambos a ser exportados para a respetiva diretoria do `run` em MLOps.
 
-## 5. Critérios de Aceitação (DoD)
-- [ ] O modelo passa no `tests/test_model.py` (O tamanho e shape dos outputs do modelo combinam com o número de classes final definido).
-- [ ] O loop de treino consegue iterar perfeitamente os tensores "Dummy Data" sem erros OOM (Out Of Memory) na gráfica (ou CPU).
-- [ ] A arquitetura foi discutida de acordo com os requisitos e documentada nos ficheiros base do PyTorch.
+## Files to create or edit
+- `src/models/classifier.py`
+- `src/training/train.py`
+- `tests/test_pytorch.py`
 
----
+## Step-by-step checklist
+- [ ] Confirma as regras de serialização do Modelo PyTorch na Constituição.
+- [ ] Na `JurimetriaMLP(nn.Module)`, define a estrutura com `torch.manual_seed(42)`.
+- [ ] No `train.py`, constrói o `Dataloader` e a clássica rotina: forward pass, `loss.backward()`, `optimizer.step()`.
+- [ ] SALVAMENTO CORRETO: `torch.save(model.state_dict(), "artifacts/run_XXX/model/weights.pth")`.
+- [ ] GUARDA A CONFIGURAÇÃO: Usa a biblioteca json para gravar `model_config.json` detalhando as dimensões para o reconstruir futuramente (ex. input_dim, hidden_dim).
 
-> **Instrução para Agente de IA:**
-> Leia a Constituição em `docs/`.
-> Invoque `/speckit.clarify`: Confirme com o Helton o número exato de neurónios na *hidden layer* (camada escondida) e o *batch size* que ele considera ideal para o teste Dummy inicial. Seguidamente, faça o `/speckit.plan`.
+## Example
+Output do teu `model_config.json`:
+```json
+{
+  "input_dim": 5000,
+  "hidden_dim": 128,
+  "output_dim": 5,
+  "dropout": 0.2,
+  "model_class": "JurimetriaMLP"
+}
+```
+
+## Tests
+Cria `tests/test_pytorch.py`. Podes usar tensores dummy aleatórios (`torch.randn`) para não bloqueares os testes. Prova que a *CrossEntropyLoss* diminui em 2 ou 3 iterações! Comando: `python -m unittest tests/test_pytorch.py`.
+
+## Definition of Done
+- A exportação dos artefactos de estado (weights e config) é validada.
+- O loss decremental foi comprovado no treino dummy.
+
+## What not to do
+- **Não** graves o modelo através de `torch.save(model, 'model.pt')`. Essa técnica grava caminhos diretos no código e quebra incompatibilidades de máquina na hora da importação noutro portátil. Exporta apenas o `state_dict`.
+
+## Dependencies
+- Baseias-te no processamento das matrizes P4 e entregas o estado do modelo P5 à Pipeline central que coordena a gravação do `manifest.json`.
+
+## Git workflow
+- Branch: `feature/<JIRA-KEY>-pytorch-mlp`
+- Commit: `[<JIRA-KEY>] Add PyTorch MLP neural network and state_dict serialization`
+
+## Commenting expectations
+- Docstrings a explicar as dimensões de entrada e de saída (logits).
+- Breves comentários de apoio às hiper-parametrizações escolhidas.

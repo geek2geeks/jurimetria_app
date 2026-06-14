@@ -1,34 +1,58 @@
-# Especificação: Ingestão de Dados (Data Loader)
+# Spec 01 — Data Loader (Ingestão de Dados PDF e JSON Raw)
 
-**Assignee:** Alessandro (P1 - Especialista em Ingestão)
-**Fase do SDD:** Specify
+## Assignee
+Alessandro — Ingestão de dados / Data Loader (P1)
 
-## 1. Contexto (O Porquê)
-O nosso sistema precisa consumir a jurisprudência portuguesa. Como o dataset completo excede os limites de memória da máquina, precisamos de um *loader* tolerante a falhas que leia os documentos de forma iterativa sem rebentar a RAM (OOM), começando pela nossa amostra diversificada compactada.
+## Plain-language goal
+A tua missão é carregar os ficheiros das pastas de dados num formato estruturado inicial para entregar à equipa de parsing. Vais focar-te em duas rotas: uma que abre `.pdf` bruto e extrai a string longa de texto, e outra que lê `.json` caso ele não esteja previamente estruturado. Ambas as rotas emitem o contrato base `RawDocument`.
 
-## 2. Tarefa Técnica (O Quê)
-1. Construir a classe/função iteradora `JurisTriageLoader` no arquivo `src/data/data_loader.py`.
-2. A classe deve receber o caminho para a pasta de dados (`data/`) extraída do ZIP.
-3. Deve iterar sobre os arquivos `.json` e `.pdf`.
-4. Em vez de carregar tudo para uma lista, a função deve usar a diretiva `yield` (Generator em Python) para devolver um dicionário cru com os metadados brutos do JSON e o conteúdo em texto do PDF (se extraível).
-5. O código deve capturar exceções (ex: JSON corrompido, PDF ilegível) e registá-las via módulo nativo `logging`, sem interromper o *loop*.
+## Why this matters
+Gerir corretamente a leitura de dados evita estrangulamentos de memória. Sem funções iteradoras (`yield`), tentar carregar 10 mil PDFs de uma vez pode esgotar a RAM do computador.
 
-## 3. Inputs e Outputs
-- **Input:** Caminho absoluto do diretório (tipo `str` ou `pathlib.Path`).
-- **Output:** Generator de dicionários: `Generator[Dict[str, Any], None, None]`.
-  - Exemplo de Yield: `{"filename": "...", "text": "...", "metadata": {...}}`
+## Inputs
+Um caminho local para a diretoria alvo: `"data/sample/"`.
 
-## 4. Regras e Restrições SDD
-- **Tipagem Forte Obrigatória:** Todas as variáveis e retornos devem usar Type Hints do pacote `typing`.
-- Nenhuma dependência pesada de ML (sem torch, sem sklearn) neste módulo. Apenas `json`, `pathlib`, `logging` e uma biblioteca leve para extração (como `pdfplumber` ou `PyPDF2` caso necessário para os PDFs).
+## Outputs
+Objetos da classe `RawDocument(filename, path, text, page_count, source)` emitidos de forma sequencial pelo iterador.
 
-## 5. Critérios de Aceitação (DoD)
-- [ ] O módulo possui o arquivo de testes unitários `tests/test_loader.py`.
-- [ ] O código consegue ler os 10.000 ficheiros JSONs da amostra sem exceder 1GB de RAM.
-- [ ] Se eu colocar um ficheiro `txt` inválido no meio, o script regista o erro num `ingestion.log` e continua a iteração.
+## Files to create or edit
+- `src/data/pdf_loader.py`
+- `src/data/json_raw_loader.py`
+- `tests/test_loader.py`
 
----
+## Step-by-step checklist
+- [ ] Confirma o formato dos contratos em `constitution.md`.
+- [ ] Usa o *Spec Kit IA* para clarificares a utilidade de `yield` ao ler milhares de ficheiros.
+- [ ] No `pdf_loader.py`, usa a biblioteca `pdfplumber`. Extrai o texto total, preenche os campos e devolve `yield RawDocument(...)` onde o campo source é `"pdf"`.
+- [ ] No `json_raw_loader.py`, lê JSONs que apenas contenham texto bruto, e devolve `RawDocument(...)` onde o source é `"json"`.
+- [ ] Garante que qualquer falha (PDF corrompido) cai num bloco `except` seguro, registando o erro sem parar o ciclo `for`.
+- [ ] Cria testes em `test_loader.py` simulando um PDF válido e um corrompido.
 
-> **Instrução para Agente de IA:**
-> Quando receberes este documento, NÃO inicies a programação imediatamente. Lê a Constituição do Projeto e executa o comando interativo:
-> `/speckit.clarify`: Aponta as dúvidas sobre a estrutura exata do JSON e como tratar PDFs protegidos. Após as respostas, prossegue para a fase `/speckit.plan`.
+## Example
+```python
+for raw_doc in carregar_pdfs("data/sample/"):
+    print(raw_doc.source) # "pdf" ou "json"
+```
+
+## Tests
+Comando base: `python -m unittest tests/test_loader.py`.
+
+## Definition of Done
+- O iterador devolve instâncias de `RawDocument`.
+- Type hints aplicados e tratamento de exceções funcional.
+
+## What not to do
+- Não convertas JSONs "estruturados" (que já tenham labels e sumários prontos) aqui. Isso pertence ao adaptador da Daniela. O teu loader é focado em texto bruto.
+- Não guardes todos os documentos numa lista gigante em memória RAM.
+
+## Dependencies
+- Vais consumir os esquemas base em `schemas.py`.
+- Entregas o `RawDocument` à Daniela (P2) que vai aplicar as regras de extração.
+
+## Git workflow
+- Branch sugerida: `feature/<JIRA-KEY>-loader`
+- Commit sugerido: `[<JIRA-KEY>] Add generator loaders for PDF and Raw JSON`
+
+## Commenting expectations
+- Docstring a explicar o uso do Iterador (Yield) para controlo de memória.
+- Comentário explicativo no bloco Try/Except justificando a continuação do loop em ficheiros corrompidos.
