@@ -1,6 +1,6 @@
 # JurisTriage PT — Constituição do Projeto
 
-**Versão:** 2.4
+**Versão:** 2.5
 **Projeto:** JurisTriage PT
 **Disciplina:** Engenharia de Software para IA e Frameworks Profundos
 **Metodologia:** Spec-Driven Development (SDD) + GitHub + Jira
@@ -17,14 +17,14 @@ A equipa tem 8 pessoas:
 
 | Pessoa | Papel principal |
 |---|---|
-| Alessandro | P1 — Ingestão de dados / Data Loader |
+| Alessandro | P1 — Ingestão e carregamento de dados |
 | Daniela | P2 — Parsing posicional de metadados |
-| Gustavo | P3 — Limpeza textual e normalização de labels |
-| Gleicy | P4 — Vetorização NumPy e split dos dados |
+| Gustavo | P3 — Limpeza textual e normalização de categorias |
+| Gleicy | P4 — Vetorização NumPy e divisão dos dados |
 | Helton | P5 — Modelo PyTorch e treino |
-| Luciana | P6 — Baseline, métricas e avaliação |
+| Luciana | P6 — Modelo de referência, métricas e avaliação |
 | Sandro | P7 — Inferência e explicação opcional |
-| Pedro | P8 — Tech Lead, QA, requisitos, arquitetura, Jira e GitHub |
+| Pedro | P8 — Responsável técnico, qualidade, requisitos, arquitetura, Jira e GitHub |
 
 ---
 
@@ -32,59 +32,58 @@ A equipa tem 8 pessoas:
 
 | Escopo | Itens |
 |---|---|
-| **Must Have** | Carregamento de PDFs/JSON, parsing estrito, limpeza, vetorização NumPy, modelo PyTorch, baseline, avaliação, inferência isolada, testes e documentação. |
+| **Must Have** | Carregamento de PDFs/JSON, análise de metadados, limpeza, vetorização NumPy, modelo PyTorch, modelo de referência, avaliação, inferência isolada, testes e documentação. |
 | **Could Have** | Explicação textual via LLM/DeepSeek. |
 
 ---
 
-## 3. Contratos de Dados Internos (Schemas)
+## 3. Contratos de dados internos
 
-Para garantir a coesão da equipa, evitamos usar dicionários genéricos. O projeto assenta em 3 contratos principais (`src/data/schemas.py`), co-mantidos pelo Pedro e pela Daniela:
+Para garantir a coesão da equipa, evitamos usar dicionários genéricos. O projeto assenta em três contratos principais, definidos em `src/dados/esquemas.py` e co-mantidos por Pedro e Daniela:
 
-1. **`RawDocument`**: Representa um documento bruto acabado de ser carregado (PDF ou JSON cru). Usado antes do parsing.
-2. **`Acordao`**: O contrato central. Representa o acórdão estruturado (com ecli, sumario, decisao_raw, etc). Independentemente de a fonte ser PDF ou JSON, a partir do P2, todo o projeto consome estritamente o `Acordao`. *Nota:* O texto aqui é estruturado, mas ainda pode conter formatação crua.
-3. **`DatasetRow`**: A linha pronta para Machine Learning, contendo o texto final limpo (input) e a label normalizada.
+1. **`DocumentoBruto`**: Representa um documento acabado de ser carregado (PDF ou JSON em bruto). Usado antes da análise de metadados.
+2. **`Acordao`**: O contrato central. Representa o acórdão estruturado, incluindo `ecli`, `sumario` e `decisao_bruta`. Independentemente da fonte, a partir do P2 todo o projeto consome `Acordao`.
+3. **`RegistoClassificacao`**: O registo pronto para aprendizagem automática, contendo o texto final limpo e a categoria normalizada.
 
 ---
 
-## 4. Gestão de Artefactos MLOps e Manifest
+## 4. Gestão de artefactos MLOps e manifesto
 
-Qualquer treino do modelo (`run`) gera resíduos (pesos e vocabulários) que têm de ser alinhados.
-Cada treino deve gerar uma subpasta no diretório `artifacts/`.
+Cada treino gera pesos, vocabulários e métricas que têm de permanecer alinhados. Cada execução cria uma subpasta em `artefactos/`.
 
 **Estrutura Recomendada:**
 ```text
-artifacts/
-└── run_001/
-    ├── vectorizer/
-    │   ├── vocab.json
+artefactos/
+└── execucao_001/
+    ├── vetorizador/
+    │   ├── vocabulario.json
     │   ├── idf.npy
-    │   └── config.json
-    ├── labels/
-    │   ├── label_to_id.json
-    │   └── id_to_label.json
-    ├── model/
-    │   ├── model_config.json
-    │   └── weights.pth
-    ├── metrics.json
-    └── manifest.json
+    │   └── configuracao.json
+    ├── categorias/
+    │   ├── categoria_para_id.json
+    │   └── id_para_categoria.json
+    ├── modelo/
+    │   ├── configuracao_modelo.json
+    │   └── pesos.pth
+    ├── metricas.json
+    └── manifesto.json
 ```
 
 **Regras de Arquitetura MLOps:**
-1. A Inferência (P7) nunca deve carregar ficheiros soltos manualmente. Deve pedir o `run_id` e usar o respetivo `manifest.json` para carregar tudo em sincronia.
-2. O Modelo PyTorch (P5) deve ser gravado estritamente com `state_dict()` em `weights.pth`. A arquitetura base fica em `model_config.json`.
-3. O Vetorizador TF-IDF (P4) só pode efetuar o `fit` no conjunto de treino (`X_train`). Validação, teste e inferência usam apenas `transform()`.
+1. A inferência (P7) nunca deve carregar ficheiros soltos manualmente. Deve pedir o `id_execucao` e usar o respetivo `manifesto.json` para carregar tudo em sincronia.
+2. O modelo PyTorch (P5) deve ser gravado estritamente com `state_dict()` em `pesos.pth`. A arquitetura base fica em `configuracao_modelo.json`.
+3. O vetorizador TF-IDF (P4) só pode efetuar `fit` em `caracteristicas_treino`. Validação, teste e inferência usam apenas `transform()`.
 
 ---
 
-## 5. Regras sobre PDFs, JSONs e Data Leakage
+## 5. Regras sobre PDFs, JSONs e fuga de informação
 
-- O parser deve ser tolerante a campos ausentes (usando `None`).
-- A `decisao_raw`, o texto dispositivo, ECLI, URL e qualquer trecho de `full_text` que revele a decisão NUNCA entram na matriz explicativa (X).
+- O analisador de metadados deve ser tolerante a campos ausentes, usando `None`.
+- A `decisao_bruta`, o texto dispositivo, ECLI, URL e qualquer trecho de `texto_integral` que revele a decisão NUNCA entram na matriz explicativa (X).
 - As únicas fontes de texto autorizadas para X são `descritores` e `sumario`, depois da limpeza definida pelo P3.
 - O papel do JSON é ser uma fonte alternativa e aceleradora. Regra:
-  - JSON cru -> `RawDocument` -> `metadata_parser` -> `Acordao`
-  - JSON estruturado -> `json_acordao_loader` (adapter) -> `Acordao`
+  - JSON em bruto -> `DocumentoBruto` -> `analisador_metadados` -> `Acordao`
+  - JSON estruturado -> `carregador_acordaos_json` -> `Acordao`
 
 ---
 
@@ -98,7 +97,7 @@ As cinco classes iniciais, aprovadas pelo Pedro como responsável técnico, são
 4. `NAO_CONHECIDA`
 5. `OUTRA`
 
-O dicionário que converte expressões jurídicas para estas classes deve ser revisto pelo Pedro. Casos ambíguos não devem ser adivinhados: ficam sem label ou são encaminhados para revisão.
+O dicionário que converte expressões jurídicas para estas classes deve ser revisto por Pedro. Casos ambíguos não devem ser adivinhados: ficam sem categoria ou são encaminhados para revisão.
 
 ---
 
@@ -108,14 +107,14 @@ O professor aprovou a equipa de oito pessoas, mas não concedeu uma autorizaçã
 
 Se um membro usar IA para programar:
 
-- deve seguir o fluxo SDD descrito em `docs/ai_development_workflow.md`;
+- deve seguir o fluxo SDD descrito em `docs/fluxo_desenvolvimento_ia.md`;
 - deve tratar toda a resposta da IA como rascunho;
 - deve ler e compreender cada alteração;
 - deve executar os testes;
-- deve declarar o uso de IA no Pull Request;
-- deve obter revisão humana antes do merge.
+- deve declarar o uso de IA no pedido de integração;
+- deve obter revisão humana antes da integração.
 
-Pedro é o revisor obrigatório dos Pull Requests dos restantes membros. Como administrador e responsável técnico, Pedro pode validar e fazer merge dos próprios PRs, desde que os testes sejam executados e a decisão fique documentada no PR.
+Pedro é o revisor obrigatório dos pedidos de integração dos restantes membros. Como administrador e responsável técnico, Pedro pode validar e integrar os próprios pedidos, desde que os testes sejam executados e a decisão fique documentada.
 
 Ferramentas recomendadas, mas não obrigatórias:
 
@@ -124,7 +123,7 @@ Ferramentas recomendadas, mas não obrigatórias:
 - DeepSeek V4 Pro;
 - Anaconda/conda com Python 3.11.
 
-Nenhuma IA pode inventar contratos, alterar `RawDocument`, `Acordao` ou `DatasetRow` sem aprovação de Pedro e Daniela, contornar testes ou efetuar merge direto em `main`.
+Nenhuma IA pode inventar contratos, alterar `DocumentoBruto`, `Acordao` ou `RegistoClassificacao` sem aprovação de Pedro e Daniela, contornar testes ou integrar alterações diretamente em `main`.
 
 > A IA pode escrever código, mas uma pessoa é responsável pelo código.
 
@@ -133,19 +132,62 @@ Nenhuma IA pode inventar contratos, alterar `RawDocument`, `Acordao` ou `Dataset
 ## 8. Segurança, privacidade e serviços externos
 
 - Segredos nunca entram no Git, documentação, screenshots, logs ou prompts.
-- PDFs, JSONs reais, `full_text`, `decisao_raw`, vocabulários e artefactos que possam conter dados identificáveis não devem ser enviados para uma IA externa.
+- PDFs, JSONs reais, `texto_integral`, `decisao_bruta`, vocabulários e artefactos que possam conter dados identificáveis não devem ser enviados para uma IA externa.
 - Apenas exemplos sintéticos ou devidamente sanitizados podem ser usados em prompts.
 - A explicação opcional produzida por LLM é texto gerado, não aconselhamento jurídico nem prova de explicabilidade do modelo PyTorch.
 - A chave DeepSeek partilhada é gerida por Pedro, deve ter limites de utilização e deve ser revogada no final do projeto ou quando um membro sair.
 
 ---
 
-## 9. Políticas de Comentários, Limpeza e Docstrings
+## 9. Nomes descritivos em português
+
+O código do JurisTriage deve usar nomes descritivos em português de Portugal. Esta regra aplica-se a classes, funções, métodos, variáveis, módulos, pastas, ficheiros de teste e chaves internas criadas pela equipa.
+
+### 9.1 Formato dos identificadores
+
+- Classes usam `PascalCase`: `DocumentoBruto`, `RegistoClassificacao`, `MotorInferencia`.
+- Funções, métodos, variáveis, módulos e pastas usam `snake_case`: `carregar_pdfs`, `decisao_bruta`, `motor_inferencia.py`.
+- Os identificadores não usam acentos, cedilhas, espaços ou hífenes.
+- Funções começam por um verbo que descreve a ação: `limpar_texto`, `avaliar_execucao`, `guardar_manifesto`.
+- Booleanos exprimem uma condição: `tem_sumario`, `modelo_carregado`, `categoria_reconhecida`.
+- Coleções usam nomes no plural: `documentos_brutos`, `categorias_previstas`, `caminhos_artefactos`.
+
+### 9.2 Clareza obrigatória
+
+- São proibidas abreviaturas vagas como `doc`, `obj`, `tmp`, `res`, `val` e `data` quando existe um nome mais preciso.
+- Não usar nomes genéricos como `processar`, `dados` ou `resultado` sem contexto suficiente.
+- Variáveis matemáticas curtas, como `x`, `y` ou `i`, só são aceitáveis em fórmulas ou ciclos locais muito pequenos, quando o significado for evidente.
+- O mesmo conceito deve ter o mesmo nome em todos os módulos.
+
+### 9.3 Vocabulário oficial
+
+| Conceito | Nome obrigatório |
+|---|---|
+| Documento acabado de carregar | `DocumentoBruto` |
+| Acórdão estruturado | `Acordao` |
+| Registo pronto para classificação | `RegistoClassificacao` |
+| Decisão original | `decisao_bruta` |
+| Texto completo | `texto_integral` |
+| Categoria final | `categoria_normalizada` |
+| Identificador de execução | `id_execucao` |
+| Semente aleatória | `semente` |
+| Manifesto da execução | `manifesto.json` |
+
+### 9.4 Exceções
+
+Mantêm-se os nomes oficiais impostos por bibliotecas, formatos, métricas e APIs externas, incluindo JSON, PDF, TF-IDF, NumPy, PyTorch, Jira, `state_dict`, `fit`, `transform`, Macro-F1 e os nomes de campos exigidos por serviços externos.
+
+O guia `docs/convencoes_nomes.md` apresenta exemplos práticos, mas esta Constituição é a fonte normativa.
+
+---
+
+## 10. Políticas de comentários, limpeza e docstrings
 
 O código deve ler-se facilmente. Os comentários justificam "Porquê" e nunca "O que é isto".
 
 **Regras:**
 - Adiciona *Docstrings* claras nas funções principais.
 - Justifica decisões invulgares em comentários (e.g., heurísticas de parsing ou tratamento de excepções).
+- Confirma que os nomes públicos cumprem a secção 9 antes de abrir um pedido de integração.
 - TODOs devem incluir o ticket real: `# TODO[SCRUM-123]: Melhorar a extração do Tribunal`.
 - Garante que os testes correm localmente (`python -m unittest discover -s tests -p "test_*.py" -v`) antes do PR.
