@@ -67,7 +67,7 @@ Foram adicionadas instruções para Windows e macOS:
 - Pedro e um colega já têm acesso; seis convites GitHub aguardam aceitação.
 - A branch `main` está protegida e exige uma aprovação humana.
 - As oito tarefas foram criadas pelo Atlassian CLI: `SCRUM-5` a `SCRUM-12`.
-- `SCRUM-12` está atribuída ao Pedro. Os emails dos restantes colegas foram recebidos, mas as contas ainda não estão disponíveis no site Jira para atribuição.
+- `SCRUM-5` a `SCRUM-12` estão atribuídas aos oito responsáveis.
 - A autenticação utilizou OAuth; o token exposto não foi reutilizado.
 
 ## Riscos pendentes
@@ -81,9 +81,6 @@ Foram adicionadas instruções para Windows e macOS:
 ## Próximas ações
 
 1. Revogar e substituir o token Jira exposto.
-2. Convidar ou ativar os sete colegas no site Jira e atribuir `SCRUM-5` a `SCRUM-11`.
-3. Confirmar que todos os colegas conseguem abrir as respetivas tarefas.
-4. Pedro valida e faz merge do Pull Request 1, documentando o bypass do CI bloqueado pela faturação.
-5. Resolver o bloqueio de faturação do GitHub Actions.
-6. Convidar os colegas.
-7. Cada membro instala o ambiente, lê o onboarding e começa pela sua spec.
+2. Confirmar que todos os colegas aceitaram os convites e conseguem abrir as respetivas tarefas.
+3. Resolver o bloqueio de faturação do GitHub Actions.
+4. Cada membro instala o ambiente, lê o onboarding e começa pela sua spec.
