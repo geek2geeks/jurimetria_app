@@ -83,7 +83,7 @@ O PR deve indicar o ticket Jira, testes executados e se houve apoio de IA. Pedro
 | Sandro | `SCRUM-11` |
 | Pedro | `SCRUM-12` |
 
-As tarefas estão no projeto Jira `SCRUM`. A tarefa do Pedro está atribuída. Os emails dos restantes colegas já foram recebidos, mas as contas ainda precisam de ser convidadas ou ativadas no site Jira antes da atribuição nominal.
+As tarefas estão no projeto Jira `SCRUM` e encontram-se atribuídas aos oito responsáveis.
 
 ## Dados
 
