@@ -38,51 +38,51 @@ class JiraTask:
 TASKS = (
     JiraTask(
         "Alessandro",
-        "JurisTriage P1 - Ingestao de dados PDF e JSON raw",
+        "JurisTriage P1 - Ingestão de dados PDF e JSON em bruto",
         "docs/specs/spec_01_alessandro_ingestao.md",
-        "Implementar loaders incrementais que devolvem RawDocument.",
+        "Implementar carregadores incrementais de PDF e JSON que devolvam objetos RawDocument.",
     ),
     JiraTask(
         "Daniela",
-        "JurisTriage P2 - Parser, schemas e adaptador JSON",
+        "JurisTriage P2 - Análise posicional, esquemas e adaptação JSON",
         "docs/specs/spec_02_daniela_dataprep.md",
-        "Definir os contratos com Pedro e converter as fontes para Acordao.",
+        "Definir os contratos de dados com Pedro e converter as diferentes fontes para Acordao.",
     ),
     JiraTask(
         "Gustavo",
-        "JurisTriage P3 - Limpeza de texto e normalizacao de labels",
+        "JurisTriage P3 - Limpeza de texto e normalização de categorias",
         "docs/specs/spec_03_gustavo_nlp.md",
-        "Limpar descritores e sumario e normalizar a label aprovada.",
+        "Limpar os descritores e o sumário e normalizar a categoria de decisão aprovada.",
     ),
     JiraTask(
         "Gleicy",
-        "JurisTriage P4 - Vetorizacao TF-IDF e split em NumPy",
+        "JurisTriage P4 - Vetorização TF-IDF e divisão dos dados com NumPy",
         "docs/specs/spec_04_gleicy_numpy.md",
-        "Implementar split e TF-IDF sem usar scikit-learn para features.",
+        "Implementar a divisão entre treino e teste e a vetorização TF-IDF sem usar scikit-learn para criar variáveis.",
     ),
     JiraTask(
         "Helton",
-        "JurisTriage P5 - Modelo e treino PyTorch",
+        "JurisTriage P5 - Modelo e treino com PyTorch",
         "docs/specs/spec_05_helton_pytorch.md",
-        "Implementar a MLP, treino e serializacao por state_dict.",
+        "Implementar a rede neuronal, o treino e a serialização dos pesos através de state_dict.",
     ),
     JiraTask(
         "Luciana",
-        "JurisTriage P6 - Baseline, metricas e avaliacao",
+        "JurisTriage P6 - Modelo de referência, métricas e avaliação",
         "docs/specs/spec_06_luciana_mlops_baseline.md",
-        "Comparar o modelo com a baseline e exportar metricas.",
+        "Comparar o modelo com um modelo de referência e exportar as métricas de avaliação.",
     ),
     JiraTask(
         "Sandro",
-        "JurisTriage P7 - Inferencia e LLM opcional",
+        "JurisTriage P7 - Inferência e modelo de linguagem opcional",
         "docs/specs/spec_07_sandro_mlops_llm.md",
-        "Criar inferencia offline por manifest; a LLM e apenas opcional.",
+        "Criar inferência local orientada pelo manifesto; o modelo de linguagem é apenas opcional.",
     ),
     JiraTask(
         "Pedro",
-        "JurisTriage P8 - Integracao, QA, CI e manifest",
+        "JurisTriage P8 - Integração, qualidade, CI e manifesto",
         "docs/specs/spec_08_pedro_scrum_lead.md",
-        "Proteger contratos, integrar o pipeline, CI e manifestos.",
+        "Proteger os contratos de dados, integrar o fluxo de processamento, manter a CI e produzir os manifestos.",
     ),
 )
 
@@ -92,11 +92,11 @@ def adf_description(task: JiraTask) -> dict[str, Any]:
 
     spec_url = f"{REPOSITORY_URL}/blob/main/{task.spec_path}"
     paragraphs = (
-        task.details,
-        f"Responsavel: {task.person}.",
-        f"Spec: {spec_url}",
-        "Fluxo: clarificar, planear, criar tarefas, analisar, implementar, testar e abrir PR.",
-        "O uso de IA deve ser declarado no PR e todo o codigo precisa de revisao humana.",
+        f"Objetivo: {task.details}",
+        f"Responsável: {task.person}.",
+        f"Especificação: {spec_url}",
+        "Fluxo de trabalho: esclarecer, planear, analisar, implementar, testar e abrir um pedido de integração (PR).",
+        "O apoio de IA deve ser declarado no PR. Todo o código deve ser compreendido, testado e sujeito a validação humana.",
     )
     return {
         "type": "doc",

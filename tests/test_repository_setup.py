@@ -6,7 +6,7 @@ import json
 import unittest
 from pathlib import Path
 
-from create_jira_tasks import TASKS
+from create_jira_tasks import TASKS, adf_description
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +30,29 @@ class RepositorySetupTests(unittest.TestCase):
         self.assertEqual(8, len(TASKS))
         self.assertEqual(8, len({task.person for task in TASKS}))
         self.assertEqual(8, len({task.summary for task in TASKS}))
+
+    def test_jira_tasks_use_consistent_portuguese(self) -> None:
+        expected_summaries = (
+            "JurisTriage P1 - Ingestão de dados PDF e JSON em bruto",
+            "JurisTriage P2 - Análise posicional, esquemas e adaptação JSON",
+            "JurisTriage P3 - Limpeza de texto e normalização de categorias",
+            "JurisTriage P4 - Vetorização TF-IDF e divisão dos dados com NumPy",
+            "JurisTriage P5 - Modelo e treino com PyTorch",
+            "JurisTriage P6 - Modelo de referência, métricas e avaliação",
+            "JurisTriage P7 - Inferência e modelo de linguagem opcional",
+            "JurisTriage P8 - Integração, qualidade, CI e manifesto",
+        )
+        self.assertEqual(expected_summaries, tuple(task.summary for task in TASKS))
+
+        for task in TASKS:
+            description = " ".join(
+                block["content"][0]["text"]
+                for block in adf_description(task)["content"]
+            )
+            self.assertIn("Responsável:", description)
+            self.assertIn("Especificação:", description)
+            self.assertIn("Fluxo de trabalho:", description)
+            self.assertIn("validação humana", description)
 
     def test_jira_member_example_covers_the_whole_team(self) -> None:
         member_example = json.loads(
