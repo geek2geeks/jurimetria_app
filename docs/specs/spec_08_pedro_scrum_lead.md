@@ -1,32 +1,68 @@
-# Especificação: Liderança Técnica, QA, CI/CD e Requisitos
+# Spec 08 — Scrum Lead, Integração, MLOps e Manifest
 
-**Assignee:** Pedro (P7/P8 - Scrum Master e Tech Lead)
-**Fase do SDD:** Specify
+## Assignee
+Pedro — Tech Lead, Integração, Requisitos, e MLOps (P8)
 
-## 1. Contexto (O Porquê)
-Enquanto a restante equipa avança na execução das trincheiras de código, é vital o papel de liderança para assegurar a visão geral e a aprovação global do projeto nos itens teóricos da grelha de avaliação (Design, Arquitetura, Requisitos). O Pedro é o guarda de controlo do repositório de forma a garantir que os pontos académicos (como Git, Tipagem e Qualidade de Código - equivalendo a ~45% do peso da nota na primeira fase) sejam cumpridos por todos sem exceção.
+## Jira
+`SCRUM-12`
 
-## 2. Tarefa Técnica (O Quê)
-1. **QA e GitHub Actions:** Criar um *workflow* no repositório GitHub (`.github/workflows/python-tests.yml`). Este script deve obrigar o servidor do GitHub a correr o `python -m unittest` toda a vez que alguém tentar fazer merge para a `main`. Se os testes falharem, o Pull Request fica bloqueado.
-2. **Linting de Tipos:** Configurar o `flake8` ou `mypy` no projeto para garantir e cobrar as Type Hints que a universidade exige.
-3. **Gestão dos Specs:** O Pedro distribuirá através do sistema de Tickets do *Jira* os restantes 7 Documentos de Especificações (*Specifys* gerados) por cada um dos Assignees.
-4. **Requisitos Teóricos:** Avançar a redação académica dos Requisitos da Entrega 5 (no ficheiro `docs/requirements.md`) documentando Formalmente as Restrições, Regras de Negócio, ADRs (Decision Records) e Estruturas da Base de Dados.
+## Plain-language goal
+Como responsável técnico do fluxo, assumes o papel de garantir que todos os blocos de código encaixam na perfeição. Trabalhas na génese dos contratos de dados (`schemas.py` com a Daniela) para assegurar formatos consistentes, construindo o motor integrador do projeto (`dataset_builder.py`). Este script processa as dezenas de `Acordaos`, passa-os pelo módulo de limpeza, e solidifica-os sob a forma do dataset pronto: `DatasetRow`. Além de dominares a esteira do CI/CD com o Github Actions, tens a incumbência final de emitir o `manifest.json`.
 
-## 3. Inputs e Outputs
-- **Input:** Relatórios de PR dos colegas na plataforma e atualizações teóricas.
-- **Output:** Repositório estável (Verde nas *GitHub Actions*) e com o documento `requirements.md` formatado nos preceitos rígidos da Engenharia de Software ISO.
+## Why this matters
+Garante que o repositório é funcional de ponta a ponta. Se as pipelines de conversão quebrassem na estrutura (`Acordao` para `DatasetRow`), nenhum aluno subsequente poderia trabalhar. O manifesto MLOps serve como a "Certidão de Nascimento" do modelo, garantindo o registo seguro das suas componentes (vocabulário, treino e pesos da rede) para a reprodução futura da experiência.
 
-## 4. Regras e Restrições SDD
-- **Tratamento de Exceção:** A conta do Lead é a única com estatuto administrativo na organização, sendo o único membro autorizado a sobrepor eventuais conflitos (Merge Conflicts pesados) de forma manual.
-- Nenhum membro tem permissão direta à `main`.
+## Inputs
+- Os módulos limpos e funcionais do ecossistema.
+- Os objetos instanciados do fluxo inicial de `Acordao`.
 
-## 5. Critérios de Aceitação (DoD)
-- [ ] O repositório tem as Pull Requests blindadas pela obrigatoriedade de sucesso do CI/CD (Testes e Type Checks).
-- [ ] Os 7 Specs estão registados nos *epics* corretos do Jira.
-- [ ] Documento visionário escrito (`vision.md`) com a declaração ética de uso da Jurisprudência no que toca à Lei de Proteção de Dados (RGPD).
+## Outputs
+- As definições lógicas essenciais de `schemas.py` desenhadas e afinadas.
+- O script integrador global: `dataset_builder.py` a exportar instâncias limpas de `DatasetRow`.
+- O empacotamento MLOps final (manifest script) a compilar para a pasta local os dados do `manifest.json`.
 
----
+## Files to create or edit
+- `src/data/schemas.py` (Copropriedade com P2)
+- `src/data/dataset_builder.py`
+- `.github/workflows/python-tests.yml`
+- Pipeline runner (e.g. `main.py` ou `run_pipeline.py`)
 
-> **Instrução para Agente de IA:**
-> Como companheiro IA do Scrum Master, foque-se inteiramente em não escrever código utilitário de MLOps. Confirme em contexto o ficheiro da Constituição (`constitution.md`).
-> Realize a Fase `/speckit.plan`: Desenhe como deve ser estruturado o ficheiro `.yaml` para o servidor Cloud do GitHub proteger eficientemente a árvore de projetos do Jira.
+## Step-by-step checklist
+- [ ] Confirma e garante o rastreio rigoroso dos contratos (Data Loader, Schema, etc.) estipulados na `constitution.md`.
+- [ ] Estabelece em Python as Dataclasses base fortes: `RawDocument`, `Acordao` e `DatasetRow`.
+- [ ] Desenvolve a base iteradora do construtor. Para cada objeto lido, executa a purificação associada à limpeza da decisão e a emissão final sob a forma unitária orientada ao ML (`DatasetRow`).
+- [ ] Prepara o YML Actions que rodará ciclicamente a pasta `tests/` confirmando a higidez do código face aos sucessivos PRs dos teus colegas.
+- [ ] Quando efetuares as extrações para treino, garante que escreves fisicamente a `seed` base do teu teste, links e resultados estatísticos num objeto e o guardas com o registo de metadata total em formato JSON na sub-pasta daquele `run_XXX`.
+
+## Example
+Modelo do Manifest que deves guardar em `artifacts/run_XXX/manifest.json`:
+```json
+{
+  "run_id": "run_001",
+  "seed": 42,
+  "vectorizer": "vectorizer/vocab.json",
+  "weights": "model/weights.pth",
+  "labels": "labels/id_to_label.json"
+}
+```
+
+## Tests
+Mantém uma bateria de testes rígida que possa processar rapidamente pequenas amostras no Github Actions sem onerar os recursos da equipa. Os Unittests provam a integridade dos módulos aglomerados.
+
+## Definition of Done
+- Esquemas de classes bem formatados e em produção limpa nas etapas do pipeline.
+- GitHub Actions ativado e reprodutibilidade preservada nos manifestos gerados.
+
+## What not to do
+- Mantém o foco no controlo de integridade de data leakage. Se notares falhas ou passagem de `Decisão Integral` indevida a jusante da Pipeline, intervém junto do grupo.
+- Evita aprovar Pull Requests de código solto sem a devida cobertura de documentação dos outros alunos.
+
+## Dependencies
+- Assumes um papel de vigilância e coordenação. Afinas com a Daniela os schemas, monitorizas as filtragens do Gustavo, recebes e atestas os ficheiros do Helton e Gleicy e crias as referências do manifest usadas futuramente pela inferência.
+
+## Git workflow
+- Garante o code review na main e monitoriza as interações gerais do grupo ao submeter as suas branches funcionais.
+- Usa uma branch `feature/SCRUM-12-integracao`. Podes validar o teu próprio PR como administrador, documentando os testes, riscos e decisão.
+
+## Commenting expectations
+- Nos teus ficheiros de Pipeline (`main.py` e construtores), o foco dos comentários assenta em demarcar limites de módulos (por que limitámos os campos nulos ali, justificação das sementes, etc.).

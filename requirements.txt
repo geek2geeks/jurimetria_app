@@ -1,0 +1,17 @@
+# Python Core and Utils
+python-dotenv==1.0.0
+tqdm==4.66.1
+
+# Document Parsing
+PyPDF2==3.0.1
+pdfplumber==0.11.5
+
+# Machine Learning & Arrays (Strictly Numpy and PyTorch, NO scikit-learn for models)
+numpy>=1.24.0,<2.0
+torch>=2.0.0
+
+# Evaluation
+scikit-learn==1.3.0  # Allowed strictly for metrics (e.g. f1_score), not for feature engineering.
+
+# Optional LLM Integration (Inference Stretch Goal)
+requests==2.31.0
