@@ -5,27 +5,28 @@ Projeto académico da disciplina **Engenharia de Software para IA e Frameworks P
 O objetivo é construir uma prova de conceito que classifica o sentido normativo de decisões judiciais portuguesas usando apenas `descritores` e `sumario`. A arquitetura central é:
 
 ```text
-RawDocument -> Acordao -> DatasetRow -> NumPy -> PyTorch
-            -> métricas -> manifest -> inferência
+DocumentoBruto -> Acordao -> RegistoClassificacao -> NumPy -> PyTorch
+               -> métricas -> manifesto -> inferência
 ```
 
-`decisao_raw`, texto dispositivo, ECLI, URL e qualquer conteúdo que revele a resposta não podem ser usados como entrada do modelo.
+`decisao_bruta`, texto dispositivo, ECLI, URL e qualquer conteúdo que revele a resposta não podem ser usados como entrada do modelo.
 
 ## Antes de começar
 
 Lê por esta ordem:
 
 1. [Constituição do projeto](constitution.md)
-2. [Onboarding para iniciantes](docs/onboarding_for_beginners.md)
-3. [Guia de instalação](docs/software_setup.md)
-4. [Fluxo GitHub e Jira](docs/github_jira_workflow.md)
-5. [Boas práticas](docs/development_best_practices.md)
-6. [Onboarding individual](docs/onboarding_individual/README.md)
-7. A tua spec em `docs/specs/`
+2. [Guia para iniciantes](docs/guia_iniciantes.md)
+3. [Guia de instalação](docs/instalacao_software.md)
+4. [Fluxo GitHub e Jira](docs/fluxo_github_jira.md)
+5. [Boas práticas](docs/boas_praticas_desenvolvimento.md)
+6. [Guias individuais](docs/guias_individuais/README.md)
+7. [Convenções de nomes](docs/convencoes_nomes.md)
+8. A tua especificação em `docs/especificacoes/`
 
 ## Instalação rápida
 
-O guia completo, com Windows e macOS, está em [docs/software_setup.md](docs/software_setup.md).
+O guia completo, com Windows e macOS, está em [docs/instalacao_software.md](docs/instalacao_software.md).
 
 Depois de instalar Anaconda, abre o Anaconda Prompt no Windows ou Terminal no macOS:
 
@@ -39,7 +40,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 
 ## Uso de IA
 
-O professor aprovou a equipa de oito membros, mas não deu uma autorização específica para código gerado por IA. Se um aluno decidir usar IA e isso for compatível com as regras da disciplina, deve seguir o [fluxo de desenvolvimento assistido por IA](docs/ai_development_workflow.md).
+O professor aprovou a equipa de oito membros, mas não deu uma autorização específica para código gerado por IA. Se um aluno decidir usar IA e isso for compatível com as regras da disciplina, deve seguir o [fluxo de desenvolvimento assistido por IA](docs/fluxo_desenvolvimento_ia.md).
 
 Configuração recomendada:
 
@@ -52,12 +53,12 @@ Não coloques chaves, dados jurídicos reais ou dados pessoais em prompts.
 
 ## Trabalho diário
 
-Cada tarefa deve ter um ticket Jira, uma branch e um Pull Request:
+Cada tarefa deve ter um ticket Jira, um ramo e um pedido de integração:
 
 ```bash
 git switch main
 git pull --ff-only origin main
-git switch -c feature/SCRUM-123-resumo-curto
+git switch -c funcionalidade/SCRUM-123-resumo-curto
 ```
 
 Antes do commit:
@@ -89,21 +90,22 @@ As tarefas estão no projeto Jira `SCRUM` e encontram-se atribuídas aos oito re
 
 O corpus completo não pertence ao GitHub. Apenas amostras pequenas, sintéticas ou sanitizadas podem ser versionadas.
 
-O endereço do dataset de trabalho encontra-se em `.env.example`. Cria o teu `.env` local e não o commits.
+O endereço do conjunto de dados de trabalho encontra-se em `.env.example`. Cria o teu `.env` local e não o incluas num commit.
 
 ## Documentação
 
-- [Arquitetura](docs/architecture.md)
-- [Requisitos](docs/requirements.md)
-- [Decisões arquiteturais](docs/decisions.md)
-- [Ética e privacidade](docs/ethics.md)
-- [Estrutura dos PDFs](docs/pdf_structure_report.md)
-- [Fluxo assistido por IA](docs/ai_development_workflow.md)
-- [Instalação de software](docs/software_setup.md)
-- [GitHub e Jira](docs/github_jira_workflow.md)
-- [Boas práticas](docs/development_best_practices.md)
-- [Relatório desta atualização](docs/ai_documentation_update_report.md)
+- [Arquitetura](docs/arquitetura.md)
+- [Requisitos](docs/requisitos.md)
+- [Decisões arquiteturais](docs/decisoes.md)
+- [Ética e privacidade](docs/etica.md)
+- [Estrutura dos PDFs](docs/relatorio_estrutura_pdfs.md)
+- [Fluxo assistido por IA](docs/fluxo_desenvolvimento_ia.md)
+- [Instalação de software](docs/instalacao_software.md)
+- [GitHub e Jira](docs/fluxo_github_jira.md)
+- [Boas práticas](docs/boas_praticas_desenvolvimento.md)
+- [Convenções de nomes](docs/convencoes_nomes.md)
+- [Relatório desta atualização](docs/relatorio_atualizacao_documentacao_ia.md)
 
 ## Estado atual
 
-O repositório contém a arquitetura, requisitos, specs e onboarding. A implementação funcional será desenvolvida pelas oito tarefas da equipa. Não confundas documentação pronta com pipeline já implementada.
+O repositório contém a arquitetura, requisitos, especificações e guias de integração. A implementação funcional será desenvolvida pelas oito tarefas da equipa. Não confundas documentação pronta com fluxo funcional já implementado.

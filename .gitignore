@@ -45,11 +45,9 @@ data/**/*.pdf
 data/**/*.json
 !data/sample/**/*.json
 
-# Artifacts
-artifacts/run_*/
-!artifacts/README.md
-!artifacts/examples/
-!artifacts/examples/*.json
+# Artefactos
+artefactos/execucao_*/
+!artefactos/.gitkeep
 
 # Secrets
 .env
@@ -63,6 +61,8 @@ secret*.json
 api_keys.json
 jira_members.json
 jira_assignees.json
+membros_jira.json
+responsaveis_jira.json
 
 # Logs
 logs/
@@ -74,3 +74,4 @@ Desktop.ini
 
 # Local inspection output
 pdf_inspection_results.json
+relatorio_inspecao_pdfs.json

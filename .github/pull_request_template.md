@@ -33,9 +33,10 @@ Validação humana:
 
 ## Checklist
 
-- [ ] Segui a spec e a Constituição.
+- [ ] Segui a especificação e a Constituição.
+- [ ] Usei nomes descritivos em português, conforme a secção 9.
 - [ ] Adicionei ou atualizei testes.
-- [ ] Não introduzi data leakage.
+- [ ] Não introduzi fuga de informação.
 - [ ] Não incluí segredos ou dados privados.
 - [ ] Não alterei contratos sem aprovação.
 - [ ] Atualizei a documentação relevante.
