@@ -128,7 +128,7 @@ class JiraClient:
         method: str,
         path: str,
         payload: dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
+    ) -> Any:
         """Executa um pedido Jira e devolve a resposta JSON."""
 
         data = json.dumps(payload).encode("utf-8") if payload is not None else None
@@ -165,6 +165,28 @@ class JiraClient:
                 return str(issue["key"])
         return None
 
+    def find_assignable_users(
+        self,
+        project_key: str,
+        query_text: str,
+    ) -> list[dict[str, Any]]:
+        """Procura utilizadores que podem receber tarefas no projeto."""
+
+        query = urllib.parse.urlencode(
+            {
+                "project": project_key,
+                "query": query_text,
+                "maxResults": 50,
+            }
+        )
+        result = self.request(
+            "GET",
+            f"/rest/api/3/user/assignable/search?{query}",
+        )
+        if not isinstance(result, list):
+            raise RuntimeError("O Jira devolveu um formato inesperado ao procurar utilizadores.")
+        return result
+
     def create_issue(
         self,
         project_key: str,
@@ -198,6 +220,52 @@ def load_assignees(path: Path) -> dict[str, str]:
     return {str(name): str(account_id) for name, account_id in content.items()}
 
 
+def load_members(path: Path) -> dict[str, str]:
+    """Lê o mapa local Pessoa -> email da conta Atlassian."""
+
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Ficheiro de membros não encontrado: {path}. "
+            "Cria-o a partir de jira_members.example.json."
+        )
+    content = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(content, dict):
+        raise ValueError("O ficheiro de membros deve conter um objeto JSON.")
+    return {str(name): str(email) for name, email in content.items()}
+
+
+def resolve_assignees(
+    client: JiraClient,
+    project_key: str,
+    members: dict[str, str],
+) -> dict[str, str]:
+    """Resolve emails para accountIds, exigindo um resultado inequívoco."""
+
+    resolved: dict[str, str] = {}
+    for task in TASKS:
+        email = members.get(task.person, "").strip()
+        if not email:
+            raise ValueError(f"Falta o email Atlassian de {task.person}.")
+        users = client.find_assignable_users(project_key, email)
+        exact = [
+            user
+            for user in users
+            if str(user.get("emailAddress", "")).casefold() == email.casefold()
+        ]
+        candidates = exact or users
+        if len(candidates) != 1:
+            raise RuntimeError(
+                f"Não foi possível identificar {task.person} de forma inequívoca "
+                f"com o email {email}. Resultados: {len(candidates)}."
+            )
+        account_id = str(candidates[0].get("accountId", "")).strip()
+        if not account_id:
+            raise RuntimeError(f"O Jira não devolveu accountId para {task.person}.")
+        resolved[task.person] = account_id
+        print(f"Resolvido: {task.person}")
+    return resolved
+
+
 def parse_args() -> argparse.Namespace:
     """Lê os argumentos da linha de comandos."""
 
@@ -213,6 +281,17 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="JSON local com o mapa Pessoa -> Atlassian accountId.",
     )
+    parser.add_argument(
+        "--members",
+        type=Path,
+        default=None,
+        help="JSON local com o mapa Pessoa -> email Atlassian.",
+    )
+    parser.add_argument(
+        "--resolve-assignees",
+        action="store_true",
+        help="Resolve emails para accountIds e grava o ficheiro local de responsáveis.",
+    )
     return parser.parse_args()
 
 
@@ -225,7 +304,33 @@ def main() -> int:
     assignee_path = args.assignees or Path(
         os.getenv("JIRA_ASSIGNEES_FILE", "jira_assignees.json")
     )
+    member_path = args.members or Path(
+        os.getenv("JIRA_MEMBERS_FILE", "jira_members.json")
+    )
     assignees = load_assignees(assignee_path)
+
+    base_url = os.getenv("JIRA_BASE_URL", "")
+    email = os.getenv("JIRA_EMAIL", "")
+    token = os.getenv("JIRA_API_TOKEN", "")
+    if args.resolve_assignees or args.apply:
+        if not base_url or not email or not token:
+            print(
+                "Define JIRA_BASE_URL, JIRA_EMAIL e JIRA_API_TOKEN no .env local.",
+                file=sys.stderr,
+            )
+            return 2
+
+    client = JiraClient(base_url, email, token) if base_url and email and token else None
+    if args.resolve_assignees:
+        assert client is not None
+        members = load_members(member_path)
+        assignees = resolve_assignees(client, project_key, members)
+        assignee_path.write_text(
+            json.dumps(assignees, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        print(f"AccountIds gravados localmente em {assignee_path}.")
+
     missing = [task.person for task in TASKS if not assignees.get(task.person)]
 
     print(f"Projeto Jira: {project_key}")
@@ -245,17 +350,7 @@ def main() -> int:
         )
         return 2
 
-    base_url = os.getenv("JIRA_BASE_URL", "")
-    email = os.getenv("JIRA_EMAIL", "")
-    token = os.getenv("JIRA_API_TOKEN", "")
-    if not base_url or not email or not token:
-        print(
-            "Define JIRA_BASE_URL, JIRA_EMAIL e JIRA_API_TOKEN no .env local.",
-            file=sys.stderr,
-        )
-        return 2
-
-    client = JiraClient(base_url, email, token)
+    assert client is not None
     for task in TASKS:
         existing = client.find_issue(project_key, task.summary)
         if existing:

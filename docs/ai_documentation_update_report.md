@@ -67,7 +67,7 @@ Foram adicionadas instruções para Windows e macOS:
 - Pedro e um colega já têm acesso; seis convites GitHub aguardam aceitação.
 - A branch `main` está protegida e exige uma aprovação humana.
 - O script Jira foi preparado para criar oito tarefas de forma idempotente.
-- A execução real requer um token novo, email da conta administradora e `accountId` dos oito membros.
+- A execução real requer um token novo, email da conta administradora e emails Atlassian dos membros; o script resolve os `accountId`.
 
 ## Riscos pendentes
 

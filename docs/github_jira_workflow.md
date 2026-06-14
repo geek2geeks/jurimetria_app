@@ -153,3 +153,29 @@ O script `create_jira_tasks.py` prepara as oito tarefas. Por segurança:
 - só cria tarefas reais com `--apply`.
 
 Os emails são necessários para convidar colegas que ainda não estão no Jira. Para atribuição pela API, o identificador mais fiável é o `accountId` Atlassian.
+
+Fluxo recomendado:
+
+1. Revoga o token exposto e cria um token novo.
+2. Copia `.env.example` para `.env` e preenche apenas localmente.
+3. Copia `jira_members.example.json` para `jira_members.json`.
+4. Substitui os exemplos pelos emails usados nas contas Atlassian.
+5. Resolve os IDs:
+
+```bash
+python create_jira_tasks.py --resolve-assignees
+```
+
+6. Confirma a simulação:
+
+```bash
+python create_jira_tasks.py
+```
+
+7. Cria e atribui:
+
+```bash
+python create_jira_tasks.py --apply
+```
+
+`jira_members.json` e `jira_assignees.json` são locais e estão ignorados pelo Git.

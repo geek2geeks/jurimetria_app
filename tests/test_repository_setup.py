@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -29,6 +30,12 @@ class RepositorySetupTests(unittest.TestCase):
         self.assertEqual(8, len(TASKS))
         self.assertEqual(8, len({task.person for task in TASKS}))
         self.assertEqual(8, len({task.summary for task in TASKS}))
+
+    def test_jira_member_example_covers_the_whole_team(self) -> None:
+        member_example = json.loads(
+            (ROOT / "jira_members.example.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual({task.person for task in TASKS}, set(member_example))
 
     def test_numpy_is_bounded_below_version_two(self) -> None:
         requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")

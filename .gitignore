@@ -61,6 +61,7 @@ auth.json
 **/auth.json
 secret*.json
 api_keys.json
+jira_members.json
 jira_assignees.json
 
 # Logs

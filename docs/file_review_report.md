@@ -46,7 +46,7 @@ O projeto só deve ser distribuído depois de:
 | Site configurado | Indício local | `fixola198.atlassian.net`. |
 | Projeto esperado | Indício local | Chave `SCRUM`; ainda precisa de confirmação autenticada. |
 | Tarefas | Não confirmadas | O script anterior não provava que foram criadas. |
-| Responsáveis | Pendente | São necessários acesso ao site e `accountId` Atlassian de cada pessoa. |
+| Responsáveis | Pendente | O script pode resolver os `accountId` a partir dos emails Atlassian, depois de existir um token novo. |
 | Token | Comprometido | Deve ser revogado e substituído antes de usar a API. |
 
 ## Documentação
