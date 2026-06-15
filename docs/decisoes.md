@@ -23,3 +23,10 @@ Este repositório visa justificar o "Porquê" técnico das balizas fechadas aos 
 - **Data:** Junho de 2026.
 - **Decisão:** O ambiente do projeto usa Anaconda/conda com Python 3.11. O GitHub Spec Kit fica fixado em `v0.10.2`. OpenCode `>=1.14.24` com DeepSeek V4 Pro é recomendado, mas não obrigatório.
 - **Justificação:** Python 3.11 é compatível com o projeto e evita o conflito entre o ambiente Python 3.10 inicialmente proposto e os requisitos atuais do Spec Kit.
+
+## ADR-05: Mapa de normalização da decisão (Y) nas cinco classes
+- **Data:** Junho de 2026.
+- **Contexto:** O campo `decisao` do corpus tem mais de 250 formas brutas e é a origem do rótulo Y. Um mapeamento errado contamina todo o treino e as métricas. A constituição §6 exige decisão de uma pessoa responsável e proíbe adivinhar casos ambíguos.
+- **Investigação:** Análise da distribuição real em 25 000–50 000 acórdãos do corpus. Sobre as decisões não-vazias: `MANTIDA` ~52%, `REVOGADA` ~35%, `OUTRA` ~5%, `NAO_CONHECIDA` ~5%, `ANULADA` ~1,6%; ~10% com `decisao` vazia; ~1% não reconhecidas.
+- **Decisão:** Adotar o mapa ordenado documentado em `docs/esquema_json_corpus.md` §5 (inadmissibilidade → anulação → manter → revogar → outra). Provimento/procedência parcial conta como `REVOGADA`. Rejeição/não admissão → `NAO_CONHECIDA`. Competência, (in)constitucionalidade, fixação de jurisprudência e baixa/reenvio → `OUTRA`. `decisao` vazia e formas não reconhecidas ou ambíguas (incluindo veredictos penais de mérito) ficam **sem rótulo** (descartadas ou enviadas para revisão), nunca adivinhadas.
+- **Consequência:** Cobre ~99% das decisões não-vazias. O desequilíbrio (com `MANTIDA` a dominar) confirma o uso de **Macro-F1 vs baseline** (RNF08). O matching tem de tolerar o mojibake (`�`) e respeitar a ordem das regras (`improced` antes de `proced`). Recomenda-se uma revisão jurídica pontual dos casos de fronteira.

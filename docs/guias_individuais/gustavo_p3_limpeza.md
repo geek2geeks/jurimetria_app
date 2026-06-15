@@ -94,4 +94,4 @@ Podes dizer:
 
 ## Como usar IA na tua tarefa
 
-Pede um plano para regras pequenas e testáveis. Não deixes a IA inventar interpretações jurídicas: o mapa de categorias foi aprovado pelo Pedro e casos ambíguos devem ser revistos. Usa exemplos sintéticos, executa os testes e declara o apoio de IA no PR.
+Pede um plano para regras pequenas e testáveis. Não deixes a IA inventar interpretações jurídicas: o mapa de categorias está decidido e documentado em `docs/esquema_json_corpus.md` §5 (ADR-05); casos ambíguos devem ser descartados ou revistos, nunca adivinhados. Usa exemplos sintéticos, executa os testes e declara o apoio de IA no PR.

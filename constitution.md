@@ -97,7 +97,7 @@ As cinco classes iniciais, aprovadas pelo Pedro como responsável técnico, são
 4. `NAO_CONHECIDA`
 5. `OUTRA`
 
-O dicionário que converte expressões jurídicas para estas classes deve ser revisto por Pedro. Casos ambíguos não devem ser adivinhados: ficam sem categoria ou são encaminhados para revisão.
+O dicionário que converte expressões jurídicas para estas classes foi decidido com base na distribuição real do corpus e está documentado em `docs/esquema_json_corpus.md` §5 e no ADR-05 (`docs/decisoes.md`). Casos ambíguos não devem ser adivinhados: ficam sem categoria ou são encaminhados para revisão.
 
 ---
 

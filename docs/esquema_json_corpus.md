@@ -72,29 +72,44 @@ nunca interrompe o lote. A limpeza (P3) deve tolerar/normalizar o `�`.
 `descritores` é uma string separada por `;` (100% da amostra). O adaptador
 divide por `;`, faz `strip` e descarta vazios.
 
-## 5. Distribuição real de `decisao` e mapa-seed para as 5 classes (P3)
+## 5. Mapa `decisao` → classe (DECIDIDO — ver ADR-05)
 
-Numa amostra de 1500 documentos: **~9,5% têm `decisao` vazia → descartar do
-treino**. Existem ~256 expressões brutas distintas; as mais frequentes:
-`provido`, `nega provimento`, `negado provimento`, `negada a revista`,
-`confirmada`, `improcedente`, `procedente`, `revogada`, `rejeitado`,
-`decidido não tomar conhecimento`, `extinção da instância`.
+**Distribuição real** (amostra de 25 000 acórdãos, consistente com 50 000):
 
-Mapa-seed proposto (a **confirmar pelo Pedro**, constituição §6). O matching
-deve ignorar acentos e tolerar `�`:
+| Classe | % das não-vazias |
+|---|---:|
+| `MANTIDA` | 52,3% |
+| `REVOGADA` | 34,9% |
+| `OUTRA` | 5,3% |
+| `NAO_CONHECIDA` | 5,0% |
+| `ANULADA` | 1,6% |
+| não reconhecidas | ~1,0% → descartar / rever |
 
-| Classe | Stems (substring, sem acentos) |
-|---|---|
-| `MANTIDA` | `nega provimento`, `negado provimento`, `negada a revista`, `negada`, `nao provido`, `confirmada`, `improcedente`, `indeferi`, `apelacao improcedente` |
-| `REVOGADA` | `provido`, `concedida a revista`, `concedida`, `procedente`, `revogada`, `alterada a decis`, `parcialmente procedente`, `provido parcial` |
-| `ANULADA` | `anulada`, `nulidade` |
-| `NAO_CONHECIDA` | `nao tomar conhecimento`, `nao conhecido`, `rejei`, `rejeitado` |
-| `OUTRA` | `extin`, e qualquer expressão reconhecida mas fora das anteriores |
-| (vazio) | sem categoria → **descartado** do treino, não é `OUTRA` |
+Além disso, **~10% têm `decisao` vazia → descartadas do treino** (sem rótulo).
+A classe `MANTIDA` domina (desequilíbrio) — daí **Macro-F1 + baseline** (RNF08).
 
-> Cuidado: `procedente` é substring de `improcedente`. A ordem das regras
-> importa — testar `improcedente` antes de `procedente` (cobertura no
-> `tests/test_limpeza_texto.py` do P3).
+**Regras de normalização (a ordem importa — a 1ª que casa ganha).** Match sobre
+o texto em minúsculas, com `�` removido e pontuação convertida em espaço. As
+regras de **negação/inadmissibilidade vêm primeiro**, senão "negado provimento"
+seria apanhado por "provimento".
+
+| Ordem | Classe | Stems (substring) | Significado |
+|---|---|---|---|
+| 1 | `NAO_CONHECIDA` | `tomar conhec`, `conhec do recurso`, `conhec do objecto`, `rejei`, `desert`/`deserc`, `extempor`, `nao admit`/`admiss`, `negado seguimento` | recurso não conhecido / inadmissível |
+| 2 | `ANULADA` | `anulad`, `nulidad` | decisão anulada / nulidade |
+| 3 | `MANTIDA` | `nega/negado/negou/negar proviment`, `negad`, `nao provido`, `improced`, `confirma`, `mantid`/`mantem`/`manter`, `indefer`, `denegad`, `desatend` | recurso improcede → decisão recorrida mantida |
+| 4 | `REVOGADA` | `proviment`, `provid`, `proced`, `concedid`/`concede`, `revoga`, `alterad`/`alterar`, `reformad`, `modificad`, `deferid`, `atendida a reclama`, `autorizada a revis` | favorável ao recorrente (total **ou parcial**) |
+| 5 | `OUTRA` | `extin`, `prejudicad`, `homolog`, `sobrest`, `apens`, `habilita`, `desist`, `aclarad`/`retific`/`correc`, `remet`/`reenvio`/`baixa`/`prosseguimento`/`dilig`/`ordenad`, `competn`/`incompet`/`declara`, `jurisprud`/`assento`, `constituc`, `suspens`, `revis` | decisão processual / outra (não julga o mérito) |
+| — | (descartar) | `decisao` vazia OU nenhuma regra casa | sem rótulo fiável → fora do treino |
+
+**Decisões de fronteira (justificadas no ADR-05):**
+- **Parcial → `REVOGADA`.** Qualquer provimento/procedência parcial conta como `REVOGADA` (houve alteração favorável). Limitação assumida: perde-se a distinção total/parcial (futuro: classe `PARCIAL`).
+- **Rejeição / não admissão → `NAO_CONHECIDA`** (admissibilidade), não `MANTIDA`.
+- **Competência, (in)constitucionalidade, fixação de jurisprudência, baixa/reenvio → `OUTRA`** (não é manter nem revogar o mérito).
+- **Veredictos penais de mérito ("absolvido"/"condenado")** e formas ambíguas (ex.: "decidido conhecer do recurso") **não são adivinhados**: ficam sem rótulo (descartados/revistos), conforme constituição §6.
+- **`OUTRA` não é caixote de lixo:** só recebe expressões **reconhecidas** como processuais; o desconhecido é descartado, não forçado a `OUTRA`.
+
+> Cuidado técnico: `proced` é substring de `improced`, e `proviment` aparece em "negado provimento". Por isso a ordem acima é obrigatória, com cobertura em `tests/test_limpeza_texto.py`.
 
 ## 6. Recomendação de fluxo
 
