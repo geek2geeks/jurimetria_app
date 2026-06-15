@@ -23,7 +23,7 @@ Funções que devolvem texto limpo e a categoria normalizada. Vais coordenar-te 
 - `tests/test_limpeza_texto.py`
 
 ## Lista de trabalho
-- [ ] Confirma as cinco classes e o mapa de expressões aprovado pelo Pedro.
+- [ ] Usa o mapa de expressões **já decidido** em `docs/esquema_json_corpus.md` §5 (ADR-05): regras ordenadas (inadmissibilidade → anulação → manter → revogar → outra), tolerância ao `�`, e `improced` antes de `proced`. Descarta `decisao` vazia ou não reconhecida (não adivinhar).
 - [ ] Cria dicionários com os sinónimos (por exemplo negado provimento -> MANTIDA).
 - [ ] Escreve funções claras: `limpar_texto(texto: str) -> str` e `normalizar_categoria(decisao_bruta: str) -> str`.
 - [ ] Ajuda o Pedro a garantir que a conversão de `Acordao` para `RegistoClassificacao` exclui decisões nulas ou irreconhecíveis.
