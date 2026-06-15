@@ -36,13 +36,26 @@ Garante que o repositório é funcional de ponta a ponta. Se os fluxos de conver
 
 ## Exemplo
 Modelo do Manifesto que deves guardar em `artefactos/execucao_XXX/manifesto.json`:
+O manifesto referencia **todos** os artefactos de que a inferência (P7) precisa para reconstruir o vetorizador e o modelo. Segue o layout de `docs/arquitetura.md` §2:
+
 ```json
 {
   "id_execucao": "execucao_001",
   "semente": 42,
-  "vetorizador": "vetorizador/vocabulario.json",
-  "pesos": "modelo/pesos.pth",
-  "categorias": "categorias/id_para_categoria.json"
+  "vetorizador": {
+    "vocabulario": "vetorizador/vocabulario.json",
+    "idf": "vetorizador/idf.npy",
+    "configuracao": "vetorizador/configuracao.json"
+  },
+  "categorias": {
+    "categoria_para_id": "categorias/categoria_para_id.json",
+    "id_para_categoria": "categorias/id_para_categoria.json"
+  },
+  "modelo": {
+    "pesos": "modelo/pesos.pth",
+    "configuracao": "modelo/configuracao_modelo.json"
+  },
+  "metricas": "metricas.json"
 }
 ```
 

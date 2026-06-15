@@ -56,3 +56,21 @@ motor_inferencia.py
 ```
 
 Os testes mantêm o prefixo `test_`, necessário para descoberta automática, seguido de um nome português: `test_carregador_pdf.py`.
+
+## Estabilidade de caminhos (links do quickstart distribuído)
+
+O `quickstart.pdf` enviado à equipa (14/06/2026) aponta para ficheiros através de links GitHub `blob/main/<caminho>` e de menções a caminhos em texto. Como o GitHub mostra sempre a versão **atual** de cada caminho mas **não redireciona ficheiros movidos**, estes caminhos estão **congelados**: atualiza-se o conteúdo, nunca o local. Ver `ADR-06` em `docs/decisoes.md`.
+
+**Não mover, renomear nem apagar:**
+
+- Guias individuais: `docs/guias_individuais/alessandro_p1_ingestao.md`, `daniela_p2_metadados.md`, `gustavo_p3_limpeza.md`, `gleicy_p4_numpy.md`, `helton_p5_pytorch.md`, `luciana_p6_metricas.md`, `sandro_p7_inferencia.md`, `pedro_p8_integracao.md`.
+- Documentos: `constitution.md`, `README.md`, `docs/quickstart.md`, `docs/instalacao_software.md`, `docs/fluxo_github_jira.md`, `docs/esquema_json_corpus.md`, `docs/criterios_avaliacao.md`, `docs/guia_iniciantes.md`, `data/README.md`, `src/dados/esquemas.py`.
+- Pastas: `docs/guias_individuais/`, `docs/especificacoes/`, `src/` (e subpastas), `tests/`, `data/`, `artefactos/`.
+
+**Atualizar documentação em segurança:**
+
+1. Edita o ficheiro **no mesmo caminho**.
+2. Cria uma branch, faz commit e abre PR para `main`.
+3. Depois do merge, o link `blob/main/...` do quickstart passa a mostrar a versão nova — sem mudar o link nem re-enviar o PDF.
+
+**Exceção:** se for mesmo necessário mover ou renomear um destes ficheiros, é preciso re-emitir o `quickstart.pdf` (`python construir_quickstart_pdf.py`) e redistribuí-lo, e atualizar o `ADR-06`.

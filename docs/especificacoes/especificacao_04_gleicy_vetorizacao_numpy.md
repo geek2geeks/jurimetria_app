@@ -17,7 +17,7 @@ Uma lista agregada final de objetos `RegistoClassificacao`.
 
 ## Saídas
 - `caracteristicas_treino`, `caracteristicas_teste`, `categorias_treino` e `categorias_teste` (matrizes NumPy).
-- Exportação dos artefactos MLOps da tua componente: `vocabulario.json`, `idf.npy` e `categoria_para_id.json`.
+- Exportação dos artefactos MLOps da tua componente, na pasta da execução (layout em `docs/arquitetura.md` §2): `vetorizador/vocabulario.json`, `vetorizador/idf.npy`, `vetorizador/configuracao.json`, `categorias/categoria_para_id.json` e `categorias/id_para_categoria.json`. O mapa inverso `id_para_categoria.json` é o que o P7 usa para descodificar o índice previsto na classe.
 
 ## Ficheiros a criar ou alterar
 - `src/caracteristicas/vetorizador_tfidf.py`
