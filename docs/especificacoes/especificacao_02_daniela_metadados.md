@@ -27,7 +27,7 @@ Garante o isolamento do fluxo. Ao converter tudo para a classe `Acordao`, as tar
 
 ## Lista de trabalho
 - [ ] Lê a nova `constitution.md`.
-- [ ] Define em conjunto com o P8 o `esquemas.py`, contendo as classes de dados `DocumentoBruto`, `Acordao` e `RegistoClassificacao`.
+- [ ] Revê com o P8 o `esquemas.py` (já existe uma versão de referência com os três contratos alinhados ao JSON real). Ajusta campos só por acordo dos dois (constituição §7).
 - [ ] Em `analisador_metadados.py`, cria a função `analisar_documento_bruto(documento_bruto: DocumentoBruto) -> Acordao`. Extrai campos como `relator`, `ecli` e `sumario` do texto em bruto.
 - [ ] Trata o *JSON estruturado*: Cria o `carregador_acordaos_json.py` para ler ficheiros JSON (que já têm os campos separados) e instanciá-los rapidamente como objetos `Acordao`. Isto vai acelerar o desenvolvimento do resto da equipa.
 - [ ] Se uma chave no texto (Ex. *Decisão:*) não aparecer, define explicitamente esse campo como `None`.

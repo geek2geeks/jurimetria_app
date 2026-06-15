@@ -1,9 +1,8 @@
 # Python Core and Utils
 python-dotenv==1.0.0
-tqdm==4.66.1
+tqdm==4.66.1            # opcional: barra de progresso ao percorrer milhares de ficheiros (P1)
 
-# Document Parsing
-PyPDF2==3.0.1
+# Document Parsing (apenas pdfplumber; PyPDF2 removido por não ser usado no código)
 pdfplumber==0.11.5
 
 # Machine Learning & Arrays (Strictly Numpy and PyTorch, NO scikit-learn for models)

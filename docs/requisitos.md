@@ -11,9 +11,9 @@ Este documento consolida os Requisitos Funcionais (RF) e os Requisitos Não Func
 - **RF06:** Normalizar as diferentes sentenças jurídicas do Rótulo "Decisão" (Variável Y de Saída) numa lista condensada de 5 Classes (`MANTIDA`, `REVOGADA`, etc).
 - **RF07:** Construir um conjunto de dados tabular limpo para aprendizagem automática.
 - **RF08:** Vetorizar o texto usando exclusivamente computação matricial da biblioteca `NumPy` (implementando TF-IDF customizado).
-- **RF09:** Treinar um modelo Classificador Multilayer Perceptron usando exclusivamente `PyTorch`.
+- **RF09:** Treinar um modelo Classificador Multilayer Perceptron usando exclusivamente `PyTorch`, **comparando pelo menos duas configurações** (ex.: nº de camadas, ativação ou batch size) com a respetiva curva de perda.
 - **RF10:** Avaliar o modelo contra uma referência de classe maioritária, priorizando a métrica **Macro-F1**.
-- **RF11:** Executar inferência isolada. Receber o Sumário de um único novo PDF e devolver a classe final prevista sem dependências externas massivas.
+- **RF11:** Executar inferência isolada. Receber a **mesma composição de entrada do treino** (descritores + sumário, via `Acordao.texto_caracteristicas()`) de um novo documento e devolver a classe final prevista, sem dependências externas massivas.
 - **RF12:** (Opcional) Exportar métricas e binários do PyTorch (`state_dict` em `pesos.pth` e configuração em `configuracao_modelo.json`) e usar um modelo de linguagem externo apenas para formatar uma explicação textual identificada como gerada.
 
 ## Requisitos Não Funcionais (Como o sistema opera com qualidade)
