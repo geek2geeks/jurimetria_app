@@ -22,6 +22,13 @@ from src.dados.esquemas import RegistoClassificacao
 SEMENTE_PADRAO: int = 42
 PROPORCAO_TESTE_PADRAO: float = 0.2
 
+CLASSES_CANONICAS: list[str] = [
+    "ANULADA",
+    "MANTIDA",
+    "NAO_CONHECIDA",
+    "OUTRA",
+    "REVOGADA",
+]
 
 def _dividir_treino_teste(
     registos: list[RegistoClassificacao],
@@ -68,8 +75,8 @@ def _dividir_treino_teste(
     teste = [registos[i] for i in indices_teste]
 
     # Reembaralha para evitar que os dados fiquem agrupados por classe.
-    gerador.shuffle(np.array(indices_treino))
-    gerador.shuffle(np.array(indices_teste))
+    gerador.shuffle(indices_treino)
+    gerador.shuffle(indices_teste)
     treino = [registos[i] for i in indices_treino]
     teste = [registos[i] for i in indices_teste]
 
@@ -224,21 +231,21 @@ class VetorizadorTfidfNumPy:
     def _construir_mapas_categorias(
         self, categorias: list[str]
     ) -> tuple[dict[str, int], dict[int, str]]:
-        """Constrói os mapas bidirecionais entre categorias textuais e índices.
-
-        Args:
-            categorias: Lista de strings de categorias.
-
-        Returns:
-            Tuplo (categoria_para_id, id_para_categoria).
-        """
-        categorias_unicas = sorted(set(categorias))
+        """Constrói os mapas utilizando as classes canónicas do projeto."""
+        categorias_invalidas = set(categorias) - set(CLASSES_CANONICAS)
+        if categorias_invalidas:
+            raise ValueError(
+                f"Categorias desconhecidas encontradas: {sorted(categorias_invalidas)}"
+            )
         categoria_para_id = {
-            categoria: indice for indice, categoria in enumerate(categorias_unicas)
+            categoria: indice
+            for indice, categoria in enumerate(CLASSES_CANONICAS)
         }
         id_para_categoria = {
-            indice: categoria for categoria, indice in categoria_para_id.items()
+            indice: categoria
+            for indice, categoria in enumerate(CLASSES_CANONICAS)
         }
+
         return categoria_para_id, id_para_categoria
 
     def _categorias_para_indices(self, categorias: list[str]) -> np.ndarray:
@@ -250,8 +257,16 @@ class VetorizadorTfidfNumPy:
         Returns:
             Vetor NumPy de inteiros com forma (n_amostras,).
         """
+        categorias_invalidas = [
+            c for c in categorias
+            if c not in self.mapa_categoria_para_id
+        ]
+        if categorias_invalidas:
+            raise ValueError(
+                f"Categorias não suportadas: {categorias_invalidas}"
+            )
         return np.array(
-            [self.mapa_categoria_para_id[c] for c in categorias], dtype=np.int64
+            [self.mapa_categoria_para_id[c] for c in categorias], dtype=np.int64,
         )
 
     def processar_registos(
@@ -285,9 +300,9 @@ class VetorizadorTfidfNumPy:
         categorias_treino_str = [r.categoria_normalizada for r in treino]
         categorias_teste_str = [r.categoria_normalizada for r in teste]
 
-        # Os mapas de categorias são construídos apenas sobre as categorias de
-        # treino. Categorias que só aparecem no teste são inesperadas em
-        # produção e provocariam KeyError.
+        # Os mapas de categorias utilizam as classes canónicas definidas
+        # pela Constituição do Projeto, garantindo estabilidade entre
+        # treino, inferência e exportação de artefactos.
         self.mapa_categoria_para_id, self.mapa_id_para_categoria = (
             self._construir_mapas_categorias(categorias_treino_str)
         )
@@ -365,7 +380,6 @@ class VetorizadorTfidfNumPy:
         caminho_vocabulario = os.path.join(directoria, "vocabulario.json")
         with open(caminho_vocabulario, "r", encoding="utf-8") as f:
             instancia.vocabulario = json.load(f)
-
         caminho_idf = os.path.join(directoria, "idf.npy")
         instancia.idf = np.load(caminho_idf)
 
@@ -378,6 +392,5 @@ class VetorizadorTfidfNumPy:
                 int(indice): categoria
                 for categoria, indice in instancia.mapa_categoria_para_id.items()
             }
-
         instancia.esta_ajustado = True
         return instancia
