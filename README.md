@@ -84,6 +84,8 @@ O PR deve indicar o ticket Jira, testes executados e se houve apoio de IA. Pedro
 | Sandro | `SCRUM-11` |
 | Pedro | `SCRUM-12` |
 
+**Professor Avaliador:** Fernando Neto (@fernandompneto)
+
 As tarefas estão no projeto Jira `SCRUM` e encontram-se atribuídas aos oito responsáveis.
 
 ## Dados
