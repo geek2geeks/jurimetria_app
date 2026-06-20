@@ -20,7 +20,6 @@ class TestesConfiguracaoRepositorio(unittest.TestCase):
             "constitution.md",
             "docs/fluxo_desenvolvimento_ia.md",
             "docs/instalacao_software.md",
-            "docs/boas_praticas_desenvolvimento.md",
             "docs/fluxo_github_jira.md",
         )
         caminhos_em_falta = [
@@ -53,7 +52,7 @@ class TestesConfiguracaoRepositorio(unittest.TestCase):
         for tarefa in TAREFAS:
             self.assertTrue(
                 tarefa.caminho_especificacao.startswith(
-                    "docs/especificacoes/"
+                    "docs/guias_individuais/"
                 )
             )
             self.assertTrue(
