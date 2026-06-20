@@ -75,3 +75,11 @@ Desktop.ini
 # Local inspection output
 pdf_inspection_results.json
 relatorio_inspecao_pdfs.json
+
+# Ficheiros temporarios e rascunhos
+tmp/
+r*.txt
+pr_review.txt
+mensagem_equipe.md
+instrucoes_git_sandro.html
+construir_quickstart_pdf.py
