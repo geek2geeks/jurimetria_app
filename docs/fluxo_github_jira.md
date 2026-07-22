@@ -143,7 +143,7 @@ Usa `Blocked` quando precisares de uma decisão, acesso ou entrega de outro memb
 
 ## 11. Automação Jira
 
-O script `criar_tarefas_jira.py` prepara as oito tarefas. Por segurança:
+O script `scripts/criar_tarefas_jira.py` prepara as oito tarefas. Por segurança:
 
 - usa a API Jira v3;
 - não contém tokens;
@@ -158,24 +158,24 @@ Fluxo recomendado:
 
 1. Revoga o token exposto e cria um token novo.
 2. Copia `.env.example` para `.env` e preenche apenas localmente.
-3. Copia `membros_jira.exemplo.json` para `membros_jira.json`.
+3. Copia `scripts/membros_jira.exemplo.json` para `membros_jira.json`.
 4. Substitui os exemplos pelos emails usados nas contas Atlassian.
 5. Resolve os IDs:
 
 ```bash
-python criar_tarefas_jira.py --resolver-responsaveis
+python scripts/criar_tarefas_jira.py --resolver-responsaveis
 ```
 
 6. Confirma a simulação:
 
 ```bash
-python criar_tarefas_jira.py
+python scripts/criar_tarefas_jira.py
 ```
 
 7. Cria e atribui:
 
 ```bash
-python criar_tarefas_jira.py --aplicar
+python scripts/criar_tarefas_jira.py --aplicar
 ```
 
 `membros_jira.json` e `responsaveis_jira.json` são locais e estão ignorados pelo Git.

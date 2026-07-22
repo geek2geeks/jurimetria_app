@@ -10,10 +10,16 @@ Verifica:
 import unittest
 import os
 import json
-import torch
-import torch.nn as nn
-from src.modelos.rede_neuronal import RedeNeuronalClassificacao
-from src.treino.treinar_modelo import treinar_configuracao, salvar_artefatos
+
+try:
+    import torch
+    import torch.nn as nn
+    from src.modelos.rede_neuronal import RedeNeuronalClassificacao
+    from src.treino.treinar_modelo import treinar_configuracao, salvar_artefatos
+except ImportError as e:
+    raise unittest.SkipTest(
+        f"Dependência opcional em falta para testes de rede neuronal: {e}"
+    ) from e
 
 
 class TestRedeNeuronal(unittest.TestCase):

@@ -241,7 +241,7 @@ def carregar_membros(caminho: Path) -> dict[str, str]:
     if not caminho.exists():
         raise FileNotFoundError(
             f"Ficheiro de membros não encontrado: {caminho}. "
-            "Cria-o a partir de membros_jira.exemplo.json."
+            "Cria-o a partir de scripts/membros_jira.exemplo.json."
         )
     conteudo = json.loads(caminho.read_text(encoding="utf-8"))
     if not isinstance(conteudo, dict):

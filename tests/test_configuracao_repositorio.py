@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import json
+import sys
 import unittest
 from pathlib import Path
+
+# O script criar_tarefas_jira.py foi movido para scripts/ (commit 3e70b13).
+# Adicionamos essa pasta ao sys.path para que a importação funcione.
+_RAIZ_PROJETO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_RAIZ_PROJETO / "scripts"))
 
 from criar_tarefas_jira import TAREFAS, criar_descricao_adf
 
