@@ -89,7 +89,7 @@ class TestesConfiguracaoRepositorio(unittest.TestCase):
         self.assertTrue(diretorias_antigas.isdisjoint(diretorias_existentes))
 
     def test_utilitario_inspecao_usa_nome_portugues(self) -> None:
-        self.assertTrue((RAIZ / "inspecionar_pdfs.py").is_file())
+        self.assertTrue((RAIZ / "scripts" / "inspecionar_pdfs.py").is_file() or (RAIZ / "inspecionar_pdfs.py").is_file())
         self.assertFalse((RAIZ / "inspect_pdfs.py").exists())
 
     def test_tarefas_jira_usam_portugues_consistente(self) -> None:
@@ -120,8 +120,11 @@ class TestesConfiguracaoRepositorio(unittest.TestCase):
             self.assertIn("identificadores descritivos em português", descricao)
 
     def test_exemplo_membros_jira_cobre_equipa_completa(self) -> None:
+        caminho_json = RAIZ / "scripts" / "membros_jira.exemplo.json"
+        if not caminho_json.is_file():
+            caminho_json = RAIZ / "membros_jira.exemplo.json"
         exemplo_membros = json.loads(
-            (RAIZ / "membros_jira.exemplo.json").read_text(encoding="utf-8")
+            caminho_json.read_text(encoding="utf-8")
         )
         self.assertEqual(
             {tarefa.pessoa for tarefa in TAREFAS},

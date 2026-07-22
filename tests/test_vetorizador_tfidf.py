@@ -221,12 +221,12 @@ class TestVetorizadorTfidfNumPy(unittest.TestCase):
         mapa_cat, mapa_id = self.vetorizador._construir_mapas_categorias(
             ["MANTIDA", "REVOGADA", "ANULADA"]
         )
-        self.assertEqual(3, len(mapa_cat))
-        self.assertEqual(3, len(mapa_id))
+        self.assertEqual(5, len(mapa_cat))
+        self.assertEqual(5, len(mapa_id))
         self.assertEqual(0, mapa_cat["ANULADA"])
         self.assertEqual("ANULADA", mapa_id[0])
         self.assertEqual(1, mapa_cat["MANTIDA"])
-        self.assertEqual(2, mapa_cat["REVOGADA"])
+        self.assertEqual(4, mapa_cat["REVOGADA"])
 
     def test_guardar_e_carregar_artefactos(self) -> None:
         textos = ["juiz nega recurso", "tribunal concede recurso", "juiz mantem decisao"]
@@ -282,7 +282,7 @@ class TestVetorizadorTfidfNumPy(unittest.TestCase):
         )
 
         self.assertTrue(vet.esta_ajustado)
-        self.assertEqual(2, len(vet.mapa_categoria_para_id))
+        self.assertEqual(5, len(vet.mapa_categoria_para_id))
         self.assertGreater(x_treino.shape[0], 0)
         self.assertGreater(x_teste.shape[0], 0)
         self.assertEqual(x_treino.shape[1], x_teste.shape[1])
