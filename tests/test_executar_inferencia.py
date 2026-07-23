@@ -111,6 +111,7 @@ def _fabricar_execucao_de_teste(
     vetorizador = VetorizadorTfidfNumPy(min_df=1, normalizar_l2=True)
     vetorizador.vocabulario = vocabulario
     vetorizador.idf = idf.astype(np.float32)
+    vetorizador.esta_ajustado = True
     vetorizador.guardar(pasta_execucao / "vetorizador")
 
     (pasta_execucao / "categorias" / "id_para_categoria.json").write_text(

@@ -97,7 +97,14 @@ class VetorizadorTfidfNumPy:
         mapa_id_para_categoria (dict[int, str]): Mapeia índice para categoria.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        min_df: int = 1,
+        normalizar_l2: bool = True,
+        **kwargs: object,
+    ) -> None:
+        self.min_df = min_df
+        self.normalizar_l2 = normalizar_l2
         self.vocabulario: dict[str, int] = {}
         self.idf: Optional[np.ndarray] = None
         self.esta_ajustado: bool = False
@@ -394,3 +401,16 @@ class VetorizadorTfidfNumPy:
             }
         instancia.esta_ajustado = True
         return instancia
+
+    def guardar(self, caminho_pasta: str | Path) -> str:
+        """Alias de compatibilidade para guardar_artefactos."""
+        return self.guardar_artefactos(caminho_pasta)
+
+    @classmethod
+    def carregar(cls, caminho_pasta: str | Path) -> "VetorizadorTfidfNumPy":
+        """Alias de compatibilidade para carregar_artefactos."""
+        return cls.carregar_artefactos(caminho_pasta)
+
+    def transformar(self, textos: list[str]) -> np.ndarray:
+        """Alias de compatibilidade para transform."""
+        return self.transform(textos)

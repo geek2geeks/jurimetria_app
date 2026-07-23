@@ -130,7 +130,7 @@ class MotorInferencia:
         caracteristicas: npt.NDArray[np.float32] = self.vetorizador.transformar([texto])
 
         tensor_entrada: torch.Tensor = torch.from_numpy(caracteristicas).to(
-            self.dispositivo
+            dtype=torch.float32, device=self.dispositivo
         )
         with torch.no_grad():
             logits: torch.Tensor = self.modelo(tensor_entrada)
