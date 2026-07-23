@@ -97,7 +97,14 @@ class VetorizadorTfidfNumPy:
         mapa_id_para_categoria (dict[int, str]): Mapeia índice para categoria.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        min_df: int = 1,
+        normalizar_l2: bool = True,
+        **kwargs: object,
+    ) -> None:
+        self.min_df = min_df
+        self.normalizar_l2 = normalizar_l2
         self.vocabulario: dict[str, int] = {}
         self.idf: Optional[np.ndarray] = None
         self.esta_ajustado: bool = False
