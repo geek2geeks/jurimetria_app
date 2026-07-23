@@ -170,7 +170,7 @@ def treinar_pipeline(
     criterio = nn.CrossEntropyLoss()
     optimizador = optim.Adam(modelo.parameters(), lr=taxa_aprendizado)
     total_params = sum(p.numel() for p in modelo.parameters())
-    print(f"      Arquitetura: {n_features} → {numero_ocultas} → {n_classes}")
+    print(f"      Arquitetura: {n_features} -> {numero_ocultas} -> {n_classes}")
     print(f"      Parâmetros totais: {total_params:,}")
     print(f"      Dropout: {dropout} | LR: {taxa_aprendizado} | Batch: {tamanho_lote}")
 
@@ -243,7 +243,7 @@ def treinar_pipeline(
     # Salvar pesos do modelo
     caminho_pesos = os.path.join(PASTA_ARTEFACTOS, "modelo", "pesos.pth")
     torch.save(modelo.state_dict(), caminho_pesos)
-    print(f"      ✓ Pesos do modelo: {caminho_pesos}")
+    print(f"      [OK] Pesos do modelo: {caminho_pesos}")
 
     # Salvar configuração do modelo
     config_modelo = {
@@ -258,11 +258,11 @@ def treinar_pipeline(
     caminho_config = os.path.join(PASTA_ARTEFACTOS, "modelo", "configuracao.json")
     with open(caminho_config, "w", encoding="utf-8") as f:
         json.dump(config_modelo, f, indent=2, ensure_ascii=False)
-    print(f"      ✓ Configuração: {caminho_config}")
+    print(f"      [OK] Configuração: {caminho_config}")
 
     # Salvar artefactos do vetorizador
     vetorizador.guardar_artefactos(os.path.join(PASTA_ARTEFACTOS, "vetorizador"))
-    print(f"      ✓ Vetorizador TF-IDF (vocabulário, IDF, mapas)")
+    print(f"      [OK] Vetorizador TF-IDF (vocabulário, IDF, mapas)")
 
     # --- Passo 6: Verificar carregamento ---
     print("\n[6/6] Verificação: carregar modelo salvo e fazer inferência...")
@@ -280,8 +280,8 @@ def treinar_pipeline(
         previsoes_teste = torch.argmax(saidas_teste, dim=1)
         acc_verificacao = (previsoes_teste == y_teste).float().mean().item()
 
-    print(f"      ✓ Modelo carregado com sucesso!")
-    print(f"      ✓ Accuracy no teste (verificação): {acc_verificacao:.1%}")
+    print(f"      [OK] Modelo carregado com sucesso!")
+    print(f"      [OK] Accuracy no teste (verificação): {acc_verificacao:.1%}")
 
     # --- Resumo final ---
     print("\n" + "=" * 65)
