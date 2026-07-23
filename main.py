@@ -237,15 +237,8 @@ def treinar_pipeline(
 
     # --- Passo 5: Salvar modelo e artefactos ---
     print(f"\n[5/6] Salvamento de artefactos em {PASTA_ARTEFACTOS}/...")
-    os.makedirs(os.path.join(PASTA_ARTEFACTOS, "modelo"), exist_ok=True)
-    os.makedirs(os.path.join(PASTA_ARTEFACTOS, "vetorizador"), exist_ok=True)
+    from src.treino.persistencia_execucao import guardar_execucao
 
-    # Salvar pesos do modelo
-    caminho_pesos = os.path.join(PASTA_ARTEFACTOS, "modelo", "pesos.pth")
-    torch.save(modelo.state_dict(), caminho_pesos)
-    print(f"      [OK] Pesos do modelo: {caminho_pesos}")
-
-    # Salvar configuração do modelo
     config_modelo = {
         "numero_entradas": n_features,
         "numero_ocultas": numero_ocultas,
@@ -255,23 +248,43 @@ def treinar_pipeline(
         "epocas": epocas,
         "tamanho_lote": tamanho_lote,
     }
-    caminho_config = os.path.join(PASTA_ARTEFACTOS, "modelo", "configuracao.json")
-    with open(caminho_config, "w", encoding="utf-8") as f:
-        json.dump(config_modelo, f, indent=2, ensure_ascii=False)
-    print(f"      [OK] Configuração: {caminho_config}")
 
-    # Salvar artefactos do vetorizador
-    vetorizador.guardar_artefactos(os.path.join(PASTA_ARTEFACTOS, "vetorizador"))
-    print(f"      [OK] Vetorizador TF-IDF (vocabulário, IDF, mapas)")
-
-    # --- Passo 6: Verificar carregamento ---
-    print("\n[6/6] Verificação: carregar modelo salvo e fazer inferência...")
-    modelo_carregado = RedeNeuronalClassificacao(
-        entrada=n_features,
-        oculta=numero_ocultas,
-        saida=n_classes,
-        dropout=dropout,
+    pasta = guardar_execucao(
+        id_execucao=os.path.basename(PASTA_ARTEFACTOS),
+        rede=modelo,
+        vetorizador=vetorizador,
+        dimensoes={
+            "numero_entradas": n_features,
+            "numero_ocultas": numero_ocultas,
+            "numero_saidas": n_classes,
+        },
+        metricas={
+            "exatidao": historico_acc_teste[-1],
+            "perda_treino": historico_loss_treino[-1],
+            "perda_teste": historico_loss_teste[-1],
+            "nota": "dados simulados — não representa desempenho em corpus real",
+        },
+        hiperparametros={
+            "dropout": dropout,
+            "taxa_aprendizado": taxa_aprendizado,
+            "epocas": epocas,
+            "tamanho_lote": tamanho_lote,
+        },
+        semente=SEMENTE,
+        pasta_artefactos=os.path.dirname(PASTA_ARTEFACTOS),
     )
+    print(f"      [OK] Execução completa + manifesto: {pasta}")
+
+  # --- Passo 6: Verificar carregamento ---
+    print("\n[6/6] Verificação: carregar modelo salvo e fazer inferência...")
+    from src.treino.classificador_mlp import ClassificadorMLP
+
+    caminho_pesos = os.path.join(PASTA_ARTEFACTOS, "modelo", "pesos.pth")
+    modelo_carregado = ClassificadorMLP.de_configuracao({
+        "dim_entrada": n_features,
+        "dim_oculta": numero_ocultas,
+        "num_classes": n_classes,
+    })
     modelo_carregado.load_state_dict(torch.load(caminho_pesos, weights_only=True))
     modelo_carregado.eval()
 
