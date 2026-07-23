@@ -57,6 +57,25 @@ O endereço do conjunto de dados de trabalho encontra-se em `.env.example`. Cria
 - [Fluxo GitHub e Jira](docs/fluxo_github_jira.md)
 - [Convenções de nomes](docs/convencoes_nomes.md)
 
+## Entrega 3 — Pipeline de Treino PyTorch
+
+A Entrega 3 (PyTorch Parte 2) implementa a pipeline end-to-end de treino e avaliação do modelo neural:
+
+```bash
+# Executar a pipeline principal de treino e validação:
+python main.py
+
+# Executar a suite de testes unitários:
+python -m unittest discover -s tests -v
+```
+
+O comando `python main.py` realiza:
+1. Vetorização TF-IDF dos dados de treino e teste
+2. Conversão dos dados NumPy para tensores PyTorch
+3. Treino da rede neural MLP (`RedeNeuronalClassificacao`) com cálculo de perda (`CrossEntropyLoss`) e otimizador Adam
+4. Impressão de métricas de treino e teste (perda e exatidão) a cada época
+5. Exportação dos pesos (`pesos.pth`) e metadados na pasta `artefactos/`
+
 ## Estado atual
 
-O repositório contém a arquitetura, requisitos, especificações e guias de integração. A implementação funcional será desenvolvida pelas oito tarefas da equipa. Não confundas documentação pronta com fluxo funcional já implementado.
+O repositório inclui a pipeline completa da Entrega 3 (PyTorch Parte 2), com módulos integrados e cobertura de testes automatizados.
