@@ -401,3 +401,12 @@ class VetorizadorTfidfNumPy:
             }
         instancia.esta_ajustado = True
         return instancia
+
+    def guardar(self, caminho_pasta: str | Path) -> str:
+        """Alias de compatibilidade para guardar_artefactos."""
+        return self.guardar_artefactos(caminho_pasta)
+
+    @classmethod
+    def carregar(cls, caminho_pasta: str | Path) -> "VetorizadorTfidfNumPy":
+        """Alias de compatibilidade para carregar_artefactos."""
+        return cls.carregar_artefactos(caminho_pasta)
