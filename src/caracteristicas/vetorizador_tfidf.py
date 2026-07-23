@@ -410,3 +410,7 @@ class VetorizadorTfidfNumPy:
     def carregar(cls, caminho_pasta: str | Path) -> "VetorizadorTfidfNumPy":
         """Alias de compatibilidade para carregar_artefactos."""
         return cls.carregar_artefactos(caminho_pasta)
+
+    def transformar(self, textos: list[str]) -> np.ndarray:
+        """Alias de compatibilidade para transform."""
+        return self.transform(textos)
