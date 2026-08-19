@@ -1,10 +1,11 @@
 # JurisTriage PT — Constituição do Projeto
 
-**Versão:** 2.5
+**Versão:** 2.6
 **Projeto:** JurisTriage PT
 **Disciplina:** Engenharia de Software para IA e Frameworks Profundos
 **Metodologia:** Spec-Driven Development (SDD) + GitHub + Jira
-**Lead:** Pedro
+**Lead Técnico:** Pedro
+**Scrum Master:** Gustavo
 
 Esta Constituição define as regras de engenharia, colaboração, segurança e qualidade do projeto.
 Todos os membros da equipa e qualquer agente de IA que trabalhe neste repositório devem seguir este documento.
@@ -19,12 +20,12 @@ A equipa tem 8 pessoas:
 |---|---|
 | Alessandro | P1 — Ingestão e carregamento de dados |
 | Daniela | P2 — Parsing posicional de metadados |
-| Gustavo | P3 — Limpeza textual e normalização de categorias |
+| Gustavo | P3 — Limpeza textual, normalização de categorias & Scrum Master |
 | Gleicy | P4 — Vetorização NumPy e divisão dos dados |
 | Helton | P5 — Modelo PyTorch e treino |
 | Luciana | P6 — Modelo de referência, métricas e avaliação |
 | Sandro | P7 — Inferência e explicação opcional |
-| Pedro | P8 — Responsável técnico, qualidade, requisitos, arquitetura, Jira e GitHub |
+| Pedro | P8 — Responsável técnico, integração, arquitetura e qualidade |
 
 ---
 
