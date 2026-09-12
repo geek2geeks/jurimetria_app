@@ -6,6 +6,7 @@ import argparse
 import html
 import json
 import logging
+import os
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -71,12 +72,14 @@ def construir_argumentos() -> argparse.Namespace:
     )
     analisador.add_argument(
         "--exportar-resumo",
-        metavar="FICHEIRO",
+        metavar="FICHEIROS",
         default=None,
         help=(
-            "Exporta o resumo executivo para ficheiro. Formato deduzido pela "
-            "extensão: .txt/.md (texto), .json (dados), .html (relatório com "
-            "gráficos). Se omitido, usa EXPORTAR_RESUMO do .env (se definido)."
+            "Exporta o resumo executivo. Formato deduzido pela extensão: "
+            ".txt/.md (texto), .json (dados), .html (relatório com gráficos). "
+            "Aceita vários destinos separados por vírgula, ex.: "
+            "'relatorios/resumo.html,relatorios/resumo.json'. "
+            "Se omitido, usa EXPORTAR_RESUMO do .env (se definido)."
         ),
     )
     return analisador.parse_args()
@@ -138,8 +141,28 @@ def _grupo_do_ficheiro(caminho: Path, pasta_raiz: Path) -> str:
 def _resumo_como_dados(
     contagens: dict[str, "Counter[str]"],
     pasta_raiz: Path,
+    ficheiros_lidos: int | None = None,
+    sem_rotulo: int = 0,
+    erros: int = 0,
 ) -> dict[str, object]:
-    """Constrói a estrutura de dados canónica do resumo."""
+    """Constrói a estrutura de dados canónica do resumo.
+
+    `total.ficheiros` conta apenas os acórdãos efetivamente CLASSIFICADOS.
+    Ficheiros lidos que não produziram categoria (JSON sem acórdão, decisão
+    vazia ou não reconhecida — ADR-05) ou que falharam saem dessa soma. Sem
+    os campos de conciliação abaixo, esses desaparecem em silêncio e o total
+    do relatório não bate com o número de ficheiros em disco:
+
+        ficheiros_lidos = total.ficheiros + sem_rotulo + erros
+
+    Args:
+        contagens: categorias contadas por grupo (subpasta de 1.º nível).
+        pasta_raiz: pasta analisada, base do agrupamento.
+        ficheiros_lidos: ficheiros encontrados em disco. Se `None`, assume o
+            total classificado (comportamento anterior, sem conciliação).
+        sem_rotulo: ficheiros lidos que não produziram categoria.
+        erros: ficheiros que levantaram exceção durante o processamento.
+    """
 
     categorias: list[str] = ["MANTIDA", "REVOGADA", "ANULADA", "NAO_CONHECIDA", "OUTRA"]
     grupos: list[dict[str, object]] = []
@@ -170,6 +193,11 @@ def _resumo_como_dados(
     return {
         "pasta_raiz": str(pasta_raiz),
         "gerado_em": datetime.now().isoformat(timespec="seconds"),
+        "ficheiros_lidos": (
+            ficheiros_lidos if ficheiros_lidos is not None else total_global
+        ),
+        "sem_rotulo": sem_rotulo,
+        "erros": erros,
         "categorias": categorias,
         "grupos": grupos,
         "total": {
@@ -190,6 +218,13 @@ def _resumo_como_dados(
             },
         },
     }
+
+
+def _subpastas(dados: dict[str, object]) -> int:
+    """Conta subpastas reais — '(raiz)' é a pasta analisada, não uma subpasta."""
+
+    grupos: list[dict[str, object]] = cast(list[dict[str, object]], dados["grupos"])
+    return sum(1 for grupo in grupos if grupo["nome"] not in {"(raiz)", "(externo)"})
 
 
 def _resumo_como_texto(dados: dict[str, object]) -> str:
@@ -227,6 +262,17 @@ def _resumo_como_texto(dados: dict[str, object]) -> str:
     for cat in categorias:
         info = total_cats[cat]
         linhas.append(f"  {cat:<15} {info['n']:>5}  ({info['pct']:5.1f}%)")
+
+    # Conciliação — torna visível o que não foi classificado.
+    linhas.append("")
+    linhas.append("-" * 62)
+    linhas.append("Conciliação")
+    linhas.append("-" * 62)
+    linhas.append(f"  {'Ficheiros lidos':<28} {dados['ficheiros_lidos']:>5}")
+    linhas.append(f"  {'Classificados':<28} {total['ficheiros']:>5}")
+    linhas.append(f"  {'Sem rótulo (descartados)':<28} {dados['sem_rotulo']:>5}")
+    linhas.append(f"  {'Erros de processamento':<28} {dados['erros']:>5}")
+    linhas.append(f"  {'Subpastas':<28} {_subpastas(dados):>5}")
     linhas.append("=" * 62)
     return "\n".join(linhas) + "\n"
 
@@ -279,6 +325,7 @@ def _resumo_como_html(dados: dict[str, object]) -> str:
   --anulada: #d29922;
   --nao-conhecida: #8b949e;
   --outra: #bc8cff;
+  --descartado: #484f58;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }}
 
@@ -336,9 +383,21 @@ section h2 {{
   margin-bottom: 1.25rem;
 }}
 
+.aviso-conciliacao {{
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--anulada);
+  border-radius: 8px;
+  background: var(--bg-card);
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-dim);
+}}
+.aviso-conciliacao strong {{ color: var(--text); }}
+
 .kpis {{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
 }}
@@ -347,6 +406,7 @@ section h2 {{
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem;
+  min-width: 0;
   transition: border-color 0.2s, transform 0.2s;
 }}
 .kpi:hover {{ border-color: var(--accent); transform: translateY(-2px); }}
@@ -370,6 +430,7 @@ section h2 {{
   font-weight: 400;
   margin-left: 0.25rem;
 }}
+.kpi .sub {{ color: var(--text-dim); font-size: 0.8125rem; margin-top: 0.35rem; }}
 .kpi .badge {{
   display: inline-block;
   width: 0.625rem;
@@ -390,7 +451,7 @@ section h2 {{
 
 .grid-grupos {{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
   gap: 1.5rem;
 }}
 .card-grupo {{
@@ -398,6 +459,7 @@ section h2 {{
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.75rem;
+  min-width: 0;
   transition: border-color 0.2s;
 }}
 .card-grupo:hover {{ border-color: var(--accent); }}
@@ -405,6 +467,7 @@ section h2 {{
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 0.75rem;
   margin-bottom: 1.25rem;
 }}
 .card-grupo .nome {{
@@ -412,10 +475,24 @@ section h2 {{
   font-weight: 700;
   letter-spacing: -0.025em;
 }}
+.card-grupo .nome .tag-raiz {{
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  margin-left: 0.5rem;
+  vertical-align: 0.15em;
+}}
 .card-grupo .total {{
   color: var(--text-muted);
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }}
 .card-grupo .chart-wrapper {{ position: relative; height: 200px; margin-bottom: 1rem; }}
 .card-grupo .tabela {{ font-size: 0.8125rem; }}
@@ -463,8 +540,10 @@ footer a:hover {{ text-decoration: underline; }}
 <header>
   <div class="eyebrow">Jurimetria PT · Inferência (P7)</div>
   <h1>Resumo Executivo — <code>{pasta_raiz_esc}</code></h1>
-  <div class="meta">Gerado em {gerado_em_esc} · {total_ficheiros} ficheiros processados</div>
+  <div class="meta">Gerado em {gerado_em_esc} · {total_ficheiros} ficheiro(s) classificado(s)</div>
 </header>
+
+<div id="conciliacao"></div>
 
 <section>
   <h2>Indicadores principais</h2>
@@ -484,7 +563,7 @@ footer a:hover {{ text-decoration: underline; }}
 </section>
 
 <footer>
-  Relatório gerado pelo <a href="#">Motor de Inferência (P7)</a> ·
+  Relatório gerado pelo Motor de Inferência (P7) ·
   Não constitui aconselhamento jurídico.
 </footer>
 
@@ -509,6 +588,25 @@ Chart.defaults.color = textoDim;
 Chart.defaults.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
 Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
+// === Conciliação de contagem ===
+// '(raiz)' é a pasta analisada, não uma subpasta: não entra nesta contagem.
+const ehRaiz = (g) => g.nome === '(raiz)' || g.nome === '(externo)';
+const subpastas = dados.grupos.filter(g => !ehRaiz(g)).length;
+const classificados = dados.total.ficheiros;
+const lidos = dados.ficheiros_lidos != null ? dados.ficheiros_lidos : classificados;
+const semRotulo = dados.sem_rotulo != null ? dados.sem_rotulo : 0;
+const errosProc = dados.erros != null ? dados.erros : 0;
+const descartados = semRotulo + errosProc;
+
+if (lidos !== classificados) {{
+  document.getElementById('conciliacao').innerHTML =
+    '<div class="aviso-conciliacao"><strong>' + descartados + ' de ' + lidos +
+    ' ficheiro(s) não entraram na classificação.</strong> ' + semRotulo +
+    ' sem rótulo (decisão vazia ou não reconhecida, ADR-05) e ' + errosProc +
+    ' com erro de processamento. Os gráficos abaixo cobrem apenas os ' +
+    classificados + ' classificados.</div>';
+}}
+
 // === KPIs ===
 const kpis = document.getElementById('kpis');
 const totalCat = dados.total.categorias;
@@ -518,17 +616,30 @@ const ranked = dados.categorias
 
 kpis.innerHTML = `
   <div class="kpi">
-    <div class="label">Total de ficheiros</div>
-    <div class="value">${{dados.total.ficheiros.toLocaleString('pt-PT')}}</div>
+    <div class="label">Ficheiros lidos</div>
+    <div class="value">${{lidos.toLocaleString('pt-PT')}}</div>
+    <div class="sub">encontrados em disco</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Classificados</div>
+    <div class="value">${{classificados.toLocaleString('pt-PT')}}</div>
+    <div class="sub">soma das cinco categorias</div>
+  </div>
+  <div class="kpi">
+    <div class="label"><span class="badge" style="background:var(--descartado)"></span>Descartados</div>
+    <div class="value">${{descartados.toLocaleString('pt-PT')}}</div>
+    <div class="sub">${{semRotulo}} sem rótulo · ${{errosProc}} com erro</div>
   </div>
   <div class="kpi">
     <div class="label">Subpastas</div>
-    <div class="value">${{dados.grupos.length}}</div>
+    <div class="value">${{subpastas}}</div>
+    <div class="sub">a raiz é contada à parte</div>
   </div>
-` + ranked.slice(0, 3).map(c => `
+` + ranked.slice(0, 2).map(c => `
   <div class="kpi">
     <div class="label"><span class="badge" style="background:${{cores[c.nome]}}"></span>${{c.nome}}</div>
     <div class="value">${{c.pct.toFixed(1)}}<small>%</small></div>
+    <div class="sub">${{c.n}} ficheiro(s)</div>
   </div>
 `).join('');
 
@@ -584,7 +695,7 @@ dados.grupos.forEach((grupo, idx) => {{
   grid.insertAdjacentHTML('beforeend', `
     <div class="card-grupo">
       <div class="header-grupo">
-        <span class="nome">${{grupo.nome}}</span>
+        <span class="nome">${{grupo.nome}}${{ehRaiz(grupo) ? '<span class="tag-raiz">raiz</span>' : ''}}</span>
         <span class="total">${{grupo.total}} ficheiro(s)</span>
       </div>
       <div class="chart-wrapper"><canvas id="${{id}}"></canvas></div>
@@ -630,20 +741,37 @@ dados.grupos.forEach((grupo, idx) => {{
 """
 
 
+def _destinos_de_exportacao(valor: str | None) -> list[Path]:
+    """Divide a lista de destinos separada por vírgulas, ignorando vazios."""
+
+    if not valor:
+        return []
+    return [Path(parte.strip()) for parte in valor.split(",") if parte.strip()]
+
+
 def _exportar_resumo(
     contagens: dict[str, "Counter[str]"],
     pasta_raiz: Path,
     caminho_saida: str | Path,
+    ficheiros_lidos: int | None = None,
+    sem_rotulo: int = 0,
+    erros: int = 0,
 ) -> None:
     """Exporta o resumo para ficheiro, formato deduzido pela extensão.
 
     .txt, .md  → texto plano
-    .json      → dados estruturados
+    .json      → dados estruturados (consumido pelo site de apresentação)
     .html      → relatório dark com gráficos interactivos (Chart.js via CDN)
     """
     caminho: Path = Path(caminho_saida)
     extensao: str = caminho.suffix.lower()
-    dados: dict[str, object] = _resumo_como_dados(contagens, pasta_raiz)
+    dados: dict[str, object] = _resumo_como_dados(
+        contagens,
+        pasta_raiz,
+        ficheiros_lidos=ficheiros_lidos,
+        sem_rotulo=sem_rotulo,
+        erros=erros,
+    )
 
     if extensao in {".txt", ".md"}:
         conteudo: str = _resumo_como_texto(dados)
@@ -683,9 +811,7 @@ def _exibir_metricas_treino(motor: MotorInferencia, formato: str) -> None:
 
     if formato == "json":
         # No formato JSON, anexar como bloco separado para um consumidor automático.
-        import json as _json
-
-        print(_json.dumps({"metricas_treino": metricas}, ensure_ascii=False, indent=2))
+        print(json.dumps({"metricas_treino": metricas}, ensure_ascii=False, indent=2))
         return
 
     # Em texto e markdown, mostramos um pequeno cabeçalho informativo.
@@ -720,8 +846,6 @@ def principal() -> int:
     carregar_dotenv(args.dotenv)
     configuracao: ConfiguracaoSaida = ConfiguracaoSaida.a_partir_do_ambiente()
 
-    import os
-
     id_execucao: str = args.id_execucao or os.environ.get(
         "ID_EXECUCAO", "execucao_teste"
     )
@@ -751,15 +875,21 @@ def principal() -> int:
     _exibir_metricas_treino(motor, configuracao.formato)
 
     # 4. Processar cada ficheiro, acumulando contagens por subpasta.
+    #    `sem_rotulo` e `erros` são contados explicitamente para que o resumo
+    #    possa conciliar ficheiros lidos com ficheiros classificados.
     contagens: defaultdict[str, Counter[str]] = defaultdict(Counter)
     pasta_raiz: Path | None = (
         Path(args.pasta_dados or pasta_dados_env) if not args.ficheiro_json else None
     )
     erros: int = 0
+    sem_rotulo: int = 0
     for caminho in ficheiros:
         try:
             categoria: str | None = _processar_ficheiro(caminho, motor, configuracao)
-            if categoria and pasta_raiz is not None:
+            if categoria is None:
+                sem_rotulo += 1
+                continue
+            if pasta_raiz is not None:
                 grupo: str = _grupo_do_ficheiro(caminho, pasta_raiz)
                 contagens[grupo][categoria] += 1
         except Exception as erro:  # noqa: BLE001
@@ -767,20 +897,32 @@ def principal() -> int:
             erros += 1
 
     # 5. Exportação do resumo executivo (opcional — só se EXPORTAR_RESUMO/CLI definido).
-    #    Resumo só faz sentido com lote (>1 ficheiro).
-    destino_export: str | None = args.exportar_resumo or os.environ.get(
-        "EXPORTAR_RESUMO"
+    #    Resumo só faz sentido com lote (>1 ficheiro). Aceita vários destinos
+    #    separados por vírgula, ex.: 'relatorios/resumo.html,relatorios/resumo.json'.
+    destinos: list[Path] = _destinos_de_exportacao(
+        args.exportar_resumo or os.environ.get("EXPORTAR_RESUMO")
     )
     total_processados: int = sum(sum(c.values()) for c in contagens.values())
-    if pasta_raiz is not None and destino_export and total_processados > 1:
-        try:
-            _exportar_resumo(dict(contagens), pasta_raiz, destino_export)
-        except Exception as erro:  # noqa: BLE001
-            _registo.error(
-                "Falha ao exportar resumo para '%s': %s", destino_export, erro
-            )
-            erros += 1
+    if pasta_raiz is not None and destinos and total_processados > 1:
+        for destino in destinos:
+            try:
+                _exportar_resumo(
+                    dict(contagens),
+                    pasta_raiz,
+                    destino,
+                    ficheiros_lidos=len(ficheiros),
+                    sem_rotulo=sem_rotulo,
+                    erros=erros,
+                )
+            except Exception as erro:  # noqa: BLE001
+                _registo.error("Falha ao exportar resumo para '%s': %s", destino, erro)
+                erros += 1
 
+    if sem_rotulo:
+        _registo.info(
+            "%d ficheiro(s) lido(s) sem categoria atribuída (descartados do resumo).",
+            sem_rotulo,
+        )
     if erros:
         _registo.warning("%d ficheiro(s) com erro.", erros)
     return 0 if erros == 0 else 1

@@ -83,3 +83,6 @@ pr_review.txt
 mensagem_equipe.md
 instrucoes_git_sandro.html
 construir_quickstart_pdf.py
+
+.venv_jurimetria_app/
+relatorios/
